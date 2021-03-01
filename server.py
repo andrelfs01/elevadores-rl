@@ -35,19 +35,19 @@ class ElevatorRL(TextElement):
         pass
 
     def render(self, model):
-        return "Observed agents: " + str(model.targets_observed)
+        return "Observed agents: " + str(model.atendidos)
 
 
 text_element = ElevatorRL()
-canvas_element = CanvasGrid(elev_portrayal, 20, 20, 500, 500)
+canvas_element = CanvasGrid(elev_portrayal, 5, 16, 350, 600)
 chart_element = ChartModule([{"Label": "Wolves", "Color": "#AA0000"},
                              {"Label": "Sheep", "Color": "#666666"}])
 
 model_params = {                
-                "elevators": UserSettableParameter('slider', 'elevators', 1, 1, 6),
-                "floors": UserSettableParameter('slider', 'floors', 1, 1, 20),
-                "active_prediction": UserSettableParameter('checkbox', 'active_prediction', False),
+                "elevators": 4,
+                "floors": 16,
                 "a": UserSettableParameter('slider', 'a', 0.01, 0.01, 2)}
 
 server = ModularServer(modelo, [canvas_element, text_element], "ElevatorRL", model_params)
 server.port = 8521
+server.launch()

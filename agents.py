@@ -34,6 +34,7 @@ class PassagerAgent(Agent):
 
 class ElevatorAgent(Agent):
     unique_id = 'e_'
+    direction = 'UP'
 
     def __init__(self, unique_id, pos, model):
         super().__init__(unique_id, model)

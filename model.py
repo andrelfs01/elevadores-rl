@@ -10,6 +10,7 @@ import math
 from pandas import DataFrame
 import numpy as np
 import time
+import json
 
 class Modelo(Model):
     """
@@ -31,15 +32,15 @@ class Modelo(Model):
                 
         self.verbose = False  # Print-monitoring
 
-
-#        self.datacollector = DataCollector(
-#            {"Wolves": lambda m: m.schedule.get_breed_count(Wolf),
-#             "Sheep": lambda m: m.schedule.get_breed_count(Sheep)})
+        self.simulation = self.get_simulation(self, 'default')
 
         # Create elevators
         for i in range(self.num_elevators):
             # Add the agent to a random grid cell
             a = ElevatorAgent("e_"+str(i), (i+1, 0), self)
+            #seta todos UP
+            #
+            #estado de todos é 5 (0 =fora d servico, 1 = parado com viagem para baixo, 2 = parado com viagem para cima, 3 = sem missao, 4 = descenso, 5 = subindo)
             self.schedule.add(a)
             
             self.grid.place_agent(a, (i+1, 0))
@@ -50,6 +51,10 @@ class Modelo(Model):
 
     def step(self):
         #aqui vai a logica do fluxo de passageiros
+        #chegada de passageiros linha 39
+        
+        #lista de botoes linha 50
+        
         while(True):
             self.schedule.step()
             #print(self.schedule.get_agent_count)
@@ -65,3 +70,27 @@ class Modelo(Model):
 
         for i in range(step_count):
             self.step()
+
+    def get_simulation(self, fluxo):
+        #le o arquivo de fluxos
+        # simulação:
+               
+        if fluxo == 'up':
+            with open('traff_up.txt', 'r') as f:
+                traff_up = json.loads(f.read())
+                return traff_up
+
+        elif fluxo == 'dp':
+            with open('traff_dp.txt', 'r') as f:
+                traff_dp = json.loads(f.read())
+                return traff_dp
+
+        elif fluxo == 'du':
+            with open('traff_du.txt', 'r') as f:
+                traff_du = json.loads(f.read())
+                return traff_du
+        
+        else:
+            with open('traff_poisson.txt', 'r') as f:
+                traff_poisson = json.loads(f.read())
+                return traff_poisson

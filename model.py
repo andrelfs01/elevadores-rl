@@ -32,7 +32,7 @@ class Modelo(Model):
                 
         self.verbose = False  # Print-monitoring
 
-        self.simulation = self.get_simulation(self, 'default')
+        self.simulation = self.get_simulation('default')
 
         # Create elevators
         for i in range(self.num_elevators):
@@ -76,21 +76,21 @@ class Modelo(Model):
         # simulação:
                
         if fluxo == 'up':
-            with open('traff_up.txt', 'r') as f:
+            with open('resources/traff_up.txt', 'r') as f:
                 traff_up = json.loads(f.read())
                 return traff_up
 
         elif fluxo == 'dp':
-            with open('traff_dp.txt', 'r') as f:
+            with open('resources/traff_dp.txt', 'r') as f:
                 traff_dp = json.loads(f.read())
                 return traff_dp
 
         elif fluxo == 'du':
-            with open('traff_du.txt', 'r') as f:
+            with open('resources/traff_du.txt', 'r') as f:
                 traff_du = json.loads(f.read())
                 return traff_du
         
         else:
-            with open('traff_poisson.txt', 'r') as f:
+            with open('resources/traff_poisson.txt', 'r') as f:
                 traff_poisson = json.loads(f.read())
                 return traff_poisson

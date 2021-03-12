@@ -9,19 +9,20 @@ import numpy as np
 
 
 class PassagerAgent(Agent):
-    unique_id = 't_'
+    unique_id = 'p_'
     destination = None
+    initial_position = pos
+    car_designed = elevator
 
-    def __init__(self, unique_id, pos, model, destination):
+    def __init__(self, unique_id, pos, model, destination, elevator):
         super().__init__(unique_id, model)
         self.unique_id = unique_id
         self.destination = destination
         self.initial_position = pos
+        self.car_designed = elevator
 
     def step(self):
-        self.move()
-    
-    
+        pass   
 
 class ElevatorAgent(Agent):
     unique_id = 'e_'
@@ -64,6 +65,7 @@ class ElevatorAgent(Agent):
         #percorre a lista de passageiros e se for o carro atribuido e sentido certo ele entra
 
 class FloorAgent(Agent):
+    unique_id = 'f_'
     number = 0
     up_button = False
     down_button = False

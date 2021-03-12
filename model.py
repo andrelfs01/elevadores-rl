@@ -40,7 +40,7 @@ class Modelo(Model):
             a = ElevatorAgent("e_"+str(i), (i+1, 0), self)
             #seta todos UP
             #
-            #estado de todos é 5 (0 =fora d servico, 1 = parado com viagem para baixo, 2 = parado com viagem para cima, 3 = sem missao, 4 = descenso, 5 = subindo)
+            #estado de todos é 5 (0 =fora d servico, 1 = parado com viagem para baixo, 2 = parado com viagem para cima, 3 = sem missao, 4 = descendo, 5 = subindo)
             self.schedule.add(a)
             
             self.grid.place_agent(a, (i+1, 0))

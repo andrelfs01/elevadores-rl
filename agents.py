@@ -21,20 +21,11 @@ class PassagerAgent(Agent):
     def step(self):
         self.move()
     
-    def move(self):
-        #print("dest: {}".format(self.destination))
-        if (self.destination is False or self.destination is None or self.pos == self.destination):
-            self.destination = self.new_destination()
-        self.trace_next_move()
-        
-        if ( self.old_position != self.pos):
-            print("pos: {} ".format(self.pos))
-            _x, _y = self.pos
-            self.model.grid.move_agent(self, self.correction_pos(_x, _y))
+    
 
 class ElevatorAgent(Agent):
     unique_id = 'e_'
-    direction = 'UP'
+    state = 5
 
     def __init__(self, unique_id, pos, model):
         super().__init__(unique_id, model)
@@ -44,40 +35,49 @@ class ElevatorAgent(Agent):
         self.passageiros = []
         
     def step(self):
-        if (self.model.observers_indications.size != 0):
-            self.destination = self.closer()
-            self.move()
-        else:
+        #se chegou no andar
+            # verifica se vai parar
+            # se for parar 
+                # muda para parado descendo ou parado subindo ou sem missao
+        #se estiver no andar e parado 
+            self.check_leaving()
+            self.check_boarding()
+            self.check_destination()
+            #atualiza o proximo status (subir descer ou sem missao)
+            
+         
+        #se estiver descendo ou subindo
+        if (self.state == 4 or self.state == 5):
             self.move()
 
     def move(self):
-        new_position = self.trace_next_move()
-        self.model.grid.move_agent(self, new_position)
+        #se estiver parado para embarque desembarque???
+        #se estiver subindo pos + 1
+            #move todos os passageiros
+        #se estiver descendo pos + 1
+            #move todos os passageiros
     
-    def trace_next_move(self):
-        x_dest, y_dest = self.destination
-        if (x_dest > x_pos):
-            x = x_pos + 1
-            if (y_dest > y_pos):
-                y = y_pos + 1
-            elif (y_dest < y_pos):
-                y = y_pos - 1
-            else:
-                y = y_pos
-        elif (x_dest < x_pos):
-            x = x_pos - 1
-            if (y_dest > y_pos):
-                y = y_pos + 1
-            elif (y_dest < y_pos):
-                y = y_pos - 1
-            else:
-                y = y_pos
-        else:
-            x = x_pos
-            if (y_dest > y_pos):
-                y = y_pos + 1
-            elif (y_dest < y_pos):
-                y = y_pos - 1
-            else:
-                y = y_pos
-        return (x ,y)
+    def check_leaving():
+        #percorre a lista de passageiros e se for o destino ele sai
+
+    def check_boarding():
+        #percorre a lista de passageiros e se for o carro atribuido e sentido certo ele entra
+
+class FloorAgent(Agent):
+    number = 0
+    up_button = False
+    down_button = False
+    passageiros = []
+
+    def __init__(self, unique_id, number, model):
+        super().__init__(unique_id, model)
+        self.number = number
+        self.unique_id = unique_id
+        self.passageiros = []
+        self.up_button = False
+        self.down_button = False
+        
+    def step(self):
+        #se chegou passageiro
+            #aperta o botao
+            #define o carro

@@ -41,11 +41,11 @@ class ElevatorRL(TextElement):
         pass
 
     def render(self, model):
-        return "Observed agents: " + str(model.atendidos)
+        return "Passageiros atendidos: " + str(model.atendidos)
 
 
 text_element = ElevatorRL()
-canvas_element = CanvasGrid(elev_portrayal, 5, 31, 250, 600)
+canvas_element = CanvasGrid(elev_portrayal, 5, 31, 250, 900)
 chart_element = ChartModule([{"Label": "Wolves", "Color": "#AA0000"},
                              {"Label": "Sheep", "Color": "#666666"}])
 

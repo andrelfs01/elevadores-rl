@@ -3,7 +3,7 @@ from mesa.visualization.modules import CanvasGrid, ChartModule, TextElement
 from mesa.visualization.UserParam import UserSettableParameter
 
 from model import Modelo as modelo
-from agents import ElevatorAgent, PassagerAgent
+from agents import ElevatorAgent, PassagerAgent, FloorAgent
 
 def elev_portrayal(agent):
     if agent is None:
@@ -16,11 +16,17 @@ def elev_portrayal(agent):
         portrayal["scale"] = 0.9
         portrayal["Layer"] = 1
 
+    if type(agent) is FloorAgent:
+        portrayal["Shape"] = "resources/floor.png"
+        portrayal["scale"] = 0.9
+        portrayal["Layer"] = 3
+        portrayal["text"] = str(agent.number) 
+
     elif type(agent) is ElevatorAgent:
         portrayal["Shape"] = "resources/elevator.png"
         portrayal["scale"] = 0.9
         portrayal["Layer"] = 2
-        portrayal["text"] = agent.direction
+        portrayal["text"] = agent.state
         portrayal["text_color"] = "White"
 
 
@@ -39,7 +45,7 @@ class ElevatorRL(TextElement):
 
 
 text_element = ElevatorRL()
-canvas_element = CanvasGrid(elev_portrayal, 5, 16, 250, 600)
+canvas_element = CanvasGrid(elev_portrayal, 5, 31, 250, 600)
 chart_element = ChartModule([{"Label": "Wolves", "Color": "#AA0000"},
                              {"Label": "Sheep", "Color": "#666666"}])
 

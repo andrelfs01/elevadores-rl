@@ -44,11 +44,14 @@ class ElevatorAgent(Agent):
 
         #se chegou no andar
         elif (self.pos[1] % 2 == 0 and (self.state == 4 or self.state == 5) and self.cont == 0):
+            actual_floor = self.pos[1] / 2 
             # verifica se vai parar
-            if (self.pos[1] in self.destination):
+            if (actual_floor in self.destination):
                 #tira dos destinos
-                while (self.pos[1] in self.destination):
-                    self.destination.remove(self.pos[1])
+                print("antes",self.destination)
+                while (actual_floor in self.destination):
+                    self.destination.remove(actual_floor)
+                print("depois",self.destination)
                 # muda para parado descendo ou parado subindo
                 if (self.state == 4):
                     self.state = 1
@@ -58,7 +61,7 @@ class ElevatorAgent(Agent):
                 self.move()        
                              
         #se estiver no andar e parado 
-        elif (self.pos[1] % 2 == 0 and (self.state == 1 or self.state == 2)):
+        elif (self.pos[1] % 2 == 0 and (self.state == 1 or self.state == 2 or self.state == 3)):
             self.check_leaving()
             self.check_boarding()
             self.check_destination()
@@ -69,10 +72,15 @@ class ElevatorAgent(Agent):
             self.move()
 
     def move(self):
+
         #se estiver subindo pos + 1
         new_pos = self.pos
         x, y = self.pos
         if (self.state == 4 ):
+            if (self.pos[1] == 0):
+                self.state = 3
+                return 0
+
             self.cont += 1
             if self.cont == (self.model.between_floors/2):
                 new_pos = x, y - 1
@@ -80,6 +88,10 @@ class ElevatorAgent(Agent):
         
         #se estiver descendo pos + 1
         if (self.state == 5 ):
+            if (self.pos[1] == self.model.grid.height - 1):
+                self.state = 3
+                return 0
+
             print("cont: {}".format(self.cont, self.model.between_floors/2))
             self.cont += 1
             if self.cont == (self.model.between_floors/2):
@@ -88,31 +100,50 @@ class ElevatorAgent(Agent):
 
         #move todos os passageiros
         for p in self.passageiros:
-            p.pos = new_pos
             p.model.grid.move_agent(p, new_pos)
         self.model.grid.move_agent(self, new_pos)
         
     
-    def check_leaving():
+    def check_leaving(self):
+        '''
+            check if
+        '''
         actual_floor = self.pos[1] / 2 
         for p in self.passageiros:
             if p.destination == actual_floor:
                 self.passageiros.remove(p)
-                self.grid.remove_agent(p)
-                self.schedule.remove(p)
+                self.model.grid.remove_agent(p)
+                self.model.schedule.remove(p)
 
-    def check_boarding():
+    def check_boarding(self):
         actual_floor = self.pos[1] / 2 
         for f in self.model.floors:
             if f.number == actual_floor:
                 for p in f.passageiros:
                     #se for o carro atribuido
                     if p.car_designed == self:
+                        print("embarque")
                         #e o carro esta subindo e o passageiro tambem ou o carro esta descendo e o passageiro tambem
-                        if (self.state in (2,5) and p.destination < actual_floor) or  (self.state in (1,4) and p.destination > actual_floor):
+                        #if (self.state in (2,5,3) and p.destination < actual_floor) or  (self.state in (1,4,3) and p.destination > actual_floor):
+
+                        #se o carro esta ok, embarca
+                        if (self.state != 0):
                             p.model.grid.move_agent(p, self.pos)
-                            self.passageiros.add(p)
+                            self.passageiros.append(p)
                             f.passageiros.remove(p)
+                            
+    
+    def check_destination(self):
+        print(self.unique_id, self.destination)
+        if not self.destination:
+            self.state = 3
+        else:
+            actual_floor = self.pos[1] / 2 
+            if self.destination[0] > actual_floor:
+                self.state = 5
+            elif self.destination[0] < actual_floor:
+                self.state = 4
+
                         
 
 class FloorAgent(Agent):
@@ -145,6 +176,8 @@ class FloorAgent(Agent):
            
             #define o carro
             e = self.select_car(self.next_passager)
+            if self.number not in e.destination:
+                e.destination.append(self.number)
             #cria o passageiro
             p = PassagerAgent("p_"+str(self.next_passager[0]), self.pos, self.model, self.next_passager[3], self.next_passager[4],self.model.schedule.time, e)
             self.model.schedule.add(p)

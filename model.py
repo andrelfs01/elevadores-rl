@@ -12,6 +12,9 @@ import numpy as np
 import time
 import json
 
+def get_attended(model):
+    return len(model.attended)
+
 class Modelo(Model):
     """
     A model with some number of agents.
@@ -22,8 +25,9 @@ class Modelo(Model):
     a=1
     floors = []
     elevators = []
+    attended = []
 
-    def __init__(self, elevators=4, floors=16, a = 0, passager_flow='radom'):
+    def __init__(self, elevators=4, floors=16, a = 0, passager_flow='random'):
         super().__init__()
         #self.running = True
         self.num_elevators = elevators
@@ -35,6 +39,7 @@ class Modelo(Model):
         self.verbose = False  # Print-monitoring
         self.floors = []
         self.elevators = []
+        self.attended = []
         self.simulation = self.get_simulation('default')
 
         # Create elevators
@@ -54,8 +59,14 @@ class Modelo(Model):
             self.schedule.add(a)
             self.grid.place_agent(a, (0, i*2))
             self.floors.append(a)
+
+        #tempo medio de espera
+        #tempo medio de atendimento
+        #tempo medio global
+        #numero de passageiros em cada andar
+        #numero de passageiros em cada carro
         self.datacollector = DataCollector(
-            model_reporters={"Observation": "mean_observation"})
+            model_reporters={"Attended": get_attended})
 
 
     def step(self):
@@ -66,6 +77,7 @@ class Modelo(Model):
         self.schedule.step()
         #print(self.schedule.get_agent_count)
         self.datacollector.collect(self)
+        
 
     def run_model(self, step_count=2000):
 

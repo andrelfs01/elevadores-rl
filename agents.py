@@ -146,7 +146,19 @@ class ElevatorAgent(Agent):
                 self.state = 5
             elif self.destination[0] < actual_floor:
                 self.state = 4
-
+            else:
+                # print("######")
+                # print("Erro:")
+                # print("dest0:", self.destination[0])
+                # print("posicao:",self.pos[1] / 2)
+                # print("cont:",self.cont)
+                # print("######")
+                actual_floor = self.pos[1] / 2 
+                if self.destination[0] == actual_floor and self.cont == 0:
+                    self.check_leaving()
+                    self.check_boarding()
+                    while (actual_floor in self.destination):
+                        self.destination.remove(actual_floor)
                         
 
 class FloorAgent(Agent):

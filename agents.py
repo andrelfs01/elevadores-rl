@@ -14,6 +14,7 @@ class PassagerAgent(Agent):
     initial_position = (0,0)
     car_designed = None
     origem = None
+    utilized_car = None
 
     def __init__(self, unique_id, pos, model, origem, destination, time):
         super().__init__(unique_id, model)
@@ -124,15 +125,16 @@ class ElevatorAgent(Agent):
             if f.number == actual_floor:
                 for p in f.passageiros:
                     #se for o carro atribuido
-                    if p.car_designed == self:
-                        print("embarque")
-                        #e o carro esta subindo e o passageiro tambem ou o carro esta descendo e o passageiro tambem
-                        #if (self.state in (2,5,3) and p.destination < actual_floor) or  (self.state in (1,4,3) and p.destination > actual_floor):
-
+                    # ou se o  carro vai na mesma rota
+                    if p.car_designed == self or (self.state in (1,4) and p.destination < p.origem) or (self.state in (2,5) and p.destination > p.origem):
                         #se o carro esta ok, embarca
                         if (self.state != 0):
+                            print("embarque")
+                            p.utilized_car = self
                             p.model.grid.move_agent(p, self.pos)
                             self.passageiros.append(p)
+                            if p.destination not in self.destination:
+                                self.destination.append(p.destination)
                             f.passageiros.remove(p)
                             
     
@@ -142,10 +144,21 @@ class ElevatorAgent(Agent):
             self.state = 3
         else:
             actual_floor = self.pos[1] / 2 
-            if self.destination[0] > actual_floor:
-                self.state = 5
-            elif self.destination[0] < actual_floor:
-                self.state = 4
+            if self.state == 3:
+                if self.destination[0] < actual_floor:
+                    self.state = 4
+                else:
+                    self.state = 5
+            elif self.state in (2,5):
+                if max(self.destination) > actual_floor:
+                    self.state = 5
+                else:
+                    self.state = 4
+            elif self.state in (1,4):
+                if min(self.destination) < actual_floor:
+                    self.state = 4
+                else:
+                    self.state = 5
             else:
                 actual_floor = self.pos[1] / 2 
                 if self.destination[0] == actual_floor and self.cont == 0:

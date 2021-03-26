@@ -12,6 +12,18 @@ import numpy as np
 import time
 import json
 
+def get_floors(model):
+    return model.step_count
+    
+def get_cars(model):
+    return model.step_count
+
+def get_journey_time(model):
+    return model.step_count
+
+def get_waiting_time(model):    
+    return len(model.attended)
+
 def get_attended(model):
     return len(model.attended)
 
@@ -66,7 +78,12 @@ class Modelo(Model):
         #numero de passageiros em cada andar
         #numero de passageiros em cada carro
         self.datacollector = DataCollector(
-            model_reporters={"Attended": get_attended})
+            model_reporters={
+                "Attended": get_attended,
+                "Floors":get_floors,
+                "Cars": get_cars,
+                "JourneyTime": get_journey_time,
+                "WaitingTime": get_waiting_time})
 
 
     def step(self):

@@ -6,6 +6,12 @@ from mesa.visualization.UserParam import UserSettableParameter
 from model import Modelo as modelo
 from agents import ElevatorAgent, PassagerAgent, FloorAgent
 
+# Green
+RICH_COLOR = "#46FF33"
+# Red
+POOR_COLOR = "#FF3C33"
+# Blue
+MID_COLOR = "#3349FF"
 
 def elev_portrayal(agent):
     if agent is None:
@@ -73,7 +79,15 @@ model_params = {
                 "floors": 16,
                 "a": UserSettableParameter('slider', 'a', 0.01, 0.01, 2)}
 
+# map data to chart in the ChartModule
+line_chart = ChartModule(
+    [
+        {"Label": "Attended", "Color": RICH_COLOR},
+        {"Label": "JourneyTime", "Color": POOR_COLOR},
+        {"Label": "WaitingTime", "Color": MID_COLOR},
+    ]
+)
 
-server = ModularServer(modelo, [canvas_element, text_element, data_table], "ElevatorRL", model_params)
+server = ModularServer(modelo, [canvas_element, line_chart, text_element, data_table], "ElevatorRL", model_params)
 server.port = 8521
 server.launch()

@@ -11,18 +11,52 @@ from pandas import DataFrame
 import numpy as np
 import time
 import json
+import statistics
 
 def get_floors(model):
-    return model.step_count
+    total = 0
+    for f in model.floors:
+        total = total + len(f.passageiros)
+    return total
     
 def get_cars(model):
-    return model.step_count
+    total = 0
+    for e in model.elevators:
+        total = total + len(e.passageiros)
+    return total
 
 def get_journey_time(model):
-    return model.step_count
+    times = []
+    for p in model.attended:
+        times.append(p.attended - p.boarding)
+    if len(times) < 1:
+        return 0
+    return statistics.mean(times)
 
 def get_waiting_time(model):    
-    return len(model.attended)
+    times = []
+    for p in model.attended:
+        times.append(p.boarding - p.incoming)
+    if len(times) < 1:
+        return 0
+    return statistics.mean(times)
+
+def get_waiting_floor(model):    
+    times = []
+    for f in model.floors:
+        for p in f.passageiros:
+            times.append(model.schedule.time - p.incoming)
+    if len(times) < 1:
+        return 0
+    return statistics.mean(times)
+
+def get_total_time(model):    
+    times = []
+    for p in model.attended:
+        times.append(p.attended - p.incoming)
+    if len(times) < 1:
+        return 0
+    return statistics.mean(times)
 
 def get_attended(model):
     return len(model.attended)
@@ -52,7 +86,7 @@ class Modelo(Model):
         self.floors = []
         self.elevators = []
         self.attended = []
-        self.simulation = self.get_simulation('default')
+        self.simulation = self.get_simulation('up')
 
         # Create elevators
         for i in range(self.num_elevators):
@@ -83,7 +117,9 @@ class Modelo(Model):
                 "Floors":get_floors,
                 "Cars": get_cars,
                 "JourneyTime": get_journey_time,
-                "WaitingTime": get_waiting_time})
+                "WaitingTime": get_waiting_time,
+                "TotalTime": get_total_time,
+                "WaitingFloor": get_waiting_floor})
 
 
     def step(self):

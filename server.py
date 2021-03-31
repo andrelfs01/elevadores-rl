@@ -49,26 +49,8 @@ class Contador(TextElement):
         pass
 
     def render(self, model):
-        return "Passageiros atendidos: " + str(model.atendidos)
+        return "Passageiros atendidos: " + str(len(model.attended))
 
-class TableData(VisualizationElement):
-    '''
-    Display a table agents there are.
-    '''
-
-    def __init__(self, model, list_agents_name, var_name):
-        """ Create a new data renderer. """
-        self.model = model
-        self.list = list_agents_name
-        self.var_name = var_name
-
-    def render(self, model):
-        text = ""
-        for a in getattr(model, self.list):
-            text = text + a.unique_id + ":" + str(getattr(a, self.var_name))
-        return text
-
-data_table = TableData(modelo,'floors', 'passageiros')
 text_element = Contador()
 canvas_element = CanvasGrid(elev_portrayal, 5, 31, 250, 900)
 chart_element = ChartModule([{"Label": "Wolves", "Color": "#AA0000"},
@@ -80,14 +62,31 @@ model_params = {
                 "a": UserSettableParameter('slider', 'a', 0.01, 0.01, 2)}
 
 # map data to chart in the ChartModule
-line_chart = ChartModule(
+passagers_chart = ChartModule(
     [
         {"Label": "Attended", "Color": RICH_COLOR},
-        {"Label": "JourneyTime", "Color": POOR_COLOR},
-        {"Label": "WaitingTime", "Color": MID_COLOR},
+        {"Label": "Floors", "Color": POOR_COLOR},
+        {"Label": "Cars", "Color": MID_COLOR},
     ]
 )
 
-server = ModularServer(modelo, [canvas_element, line_chart, text_element, data_table], "ElevatorRL", model_params)
+# map data to chart in the ChartModule
+times_chart = ChartModule(
+    [
+        {"Label": "WaitingTime", "Color": RICH_COLOR},
+        {"Label": "JourneyTime", "Color": POOR_COLOR},
+        {"Label": "TotalTime", "Color": MID_COLOR},
+    ]
+)
+
+# map data to chart in the ChartModule
+time_floor_chart = ChartModule(
+    [
+        {"Label": "WaitingFloor", "Color": RICH_COLOR}
+    ]
+)
+
+
+server = ModularServer(modelo, [canvas_element, passagers_chart, times_chart, time_floor_chart, text_element], "ElevatorRL", model_params)
 server.port = 8521
 server.launch()

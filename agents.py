@@ -15,20 +15,24 @@ class PassagerAgent(Agent):
     car_designed = None
     origem = None
     utilized_car = None
+    incoming = -1
+    boarding = -1
+    attended = -1
 
-    def __init__(self, unique_id, pos, model, origem, destination, time):
+    def __init__(self, unique_id, pos, model, origem, destination, incoming):
         super().__init__(unique_id, model)
         self.unique_id = unique_id
         self.destination = destination
         self.initial_position = pos
         self.origem = origem
+        self.incoming = incoming
 
     def step(self):
         pass   
 
 class ElevatorAgent(Agent):
     unique_id = 'e_'
-    state = 5
+    state = 3
     cont = 0
 
     def __init__(self, unique_id, pos, model):
@@ -56,9 +60,16 @@ class ElevatorAgent(Agent):
                 print("depois",self.destination)
                 # muda para parado descendo ou parado subindo
                 if (self.state == 4):
-                    self.state = 1
+                    if (actual_floor == 0):
+                        self.state = 3
+                    else: 
+                        self.state = 1
+                #se esta subindo
                 else:
-                    self.state = 2
+                    if (actual_floor == len(self.model.elevators)):
+                        self.state = 3
+                    else: 
+                        self.state = 2
             else:
                 self.move()        
                              
@@ -111,31 +122,42 @@ class ElevatorAgent(Agent):
             check if
         '''
         actual_floor = self.pos[1] / 2 
+        remover = []
         for p in self.passageiros:
             if p.destination == actual_floor:
                 print("saindo passageiro", p.unique_id)
-                self.passageiros.remove(p)
+                remover.append(p)
                 self.model.grid.remove_agent(p)
                 self.model.schedule.remove(p)
+                p.attended = self.model.schedule.time
                 self.model.attended.append(p)
+        for p in remover:
+            self.passageiros.remove(p)
 
     def check_boarding(self):
         actual_floor = self.pos[1] / 2 
         for f in self.model.floors:
             if f.number == actual_floor:
+                remover = []
                 for p in f.passageiros:
                     #se for o carro atribuido
                     # ou se o  carro vai na mesma rota
-                    if p.car_designed == self or (self.state in (1,4) and p.destination < p.origem) or (self.state in (2,5) and p.destination > p.origem):
+                    print("EMBARCA?")
+                    if p.car_designed == self or (self.state == 3) or (self.state in (1,4) and p.destination < p.origem) or (self.state in (2,5) and p.destination > p.origem):
                         #se o carro esta ok, embarca
                         if (self.state != 0):
                             print("embarque")
                             p.utilized_car = self
                             p.model.grid.move_agent(p, self.pos)
+                            p.boarding = self.model.schedule.time
                             self.passageiros.append(p)
                             if p.destination not in self.destination:
                                 self.destination.append(p.destination)
-                            f.passageiros.remove(p)
+                            remover.append(p)
+                    else:
+                        print("nao embarcou *****************")
+                for p in remover:
+                    f.passageiros.remove(p)
                             
     
     def check_destination(self):
@@ -208,7 +230,7 @@ class FloorAgent(Agent):
             #print("---------------------")
            
             #cria o passageiro
-            p = PassagerAgent("p_"+str(self.next_passager[0]), self.pos, self.model, self.next_passager[3], self.next_passager[4],self.model.schedule.time)
+            p = PassagerAgent("p_"+str(self.next_passager[0]), self.pos, self.model, self.next_passager[3], self.next_passager[4], self.model.schedule.time)
             #define o carro
             e = self.select_car(p)
             if e != -1:

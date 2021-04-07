@@ -52,9 +52,7 @@ class Contador(TextElement):
         return "Passageiros atendidos: " + str(len(model.attended))
 
 text_element = Contador()
-canvas_element = CanvasGrid(elev_portrayal, 5, 31, 250, 900)
-chart_element = ChartModule([{"Label": "Wolves", "Color": "#AA0000"},
-                             {"Label": "Sheep", "Color": "#666666"}])
+canvas_element = CanvasGrid(elev_portrayal, 5, 31, 200, 800)
 
 model_params = {                
                 "elevators": 4,

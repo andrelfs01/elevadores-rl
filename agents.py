@@ -28,7 +28,18 @@ class PassagerAgent(Agent):
         self.incoming = incoming
 
     def step(self):
-        pass   
+        pass
+
+    def to_dict(self):
+        return {
+            'id' : self.unique_id,
+            'from': self.origem,
+            'to': self.destination,
+            'car': self.utilized_car.unique_id,
+            'incoming_time': self.incoming,
+            'boarding_time': self.boarding,
+            'attended_time': self.attended
+        }
 
 class ElevatorAgent(Agent):
     unique_id = 'e_'
@@ -143,7 +154,7 @@ class ElevatorAgent(Agent):
                     #se for o carro atribuido
                     # ou se o  carro vai na mesma rota
                     print("EMBARCA?")
-                    if p.car_designed == self or (self.state == 3) or (self.state in (1,4) and p.destination < p.origem) or (self.state in (2,5) and p.destination > p.origem):
+                    if (p.car_designed == self or (self.state == 3) or (self.state in (1,4) and p.destination < p.origem) or (self.state in (2,5) and p.destination > p.origem)) and len(self.passageiros) < 15:
                         #se o carro esta ok, embarca
                         if (self.state != 0):
                             print("embarque")
@@ -156,9 +167,13 @@ class ElevatorAgent(Agent):
                             remover.append(p)
                     else:
                         print("nao embarcou *****************")
+                        if len(self.passageiros) >= 15:
+                            print("lotado *****************")
+                print("tinha {} passageiros e embarcaram {}".format(len(f.passageiros), len(remover)))
+                
                 for p in remover:
                     f.passageiros.remove(p)
-                            
+                print("ficaram {} passageiros ".format(len(f.passageiros)))            
     
     def check_destination(self):
         print(self.unique_id, self.destination)

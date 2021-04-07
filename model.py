@@ -12,6 +12,27 @@ import numpy as np
 import time
 import json
 import statistics
+from datetime import datetime
+import sys
+
+
+def save_file_results(model):
+    passagers = model.attended
+    if len(passagers) > 0:
+        df = DataFrame.from_records([s.to_dict() for s in passagers])
+        df["waiting_time"] = (df["boarding_time"] - df["incoming_time"])
+        df["journey_time"] = (df["attended_time"] - df["boarding_time"])
+        df["total_time"] = (df["attended_time"] - df["incoming_time"])
+
+        now = datetime.now()
+        df.to_csv('saida_'+model.passager_flow+"_"+now.strftime("%Y-%m-%d_%H:%M")+".csv", index=False, sep=';')
+
+        #calcula medias e salva em txt
+        original_stdout = sys.stdout # Save a reference to the original standard output
+        with open('resultado_'+model.passager_flow+"_"+now.strftime("%Y-%m-%d_%H:%M")+".txt", 'w') as f:
+            sys.stdout = f # Change the standard output to the file we created.
+            print(df.mean(axis=0))
+            sys.stdout = original_stdout # Reset the standard output to its original value
 
 def get_floors(model):
     total = 0
@@ -72,6 +93,7 @@ class Modelo(Model):
     floors = []
     elevators = []
     attended = []
+    gerado_saida = False
 
     def __init__(self, elevators=4, floors=16, a = 0, passager_flow='random'):
         super().__init__()
@@ -81,12 +103,13 @@ class Modelo(Model):
         self.grid = MultiGrid(int(elevators+1), int(floors*2)-1, False)
         self.schedule = RandomActivation(self)
         self.a = a
-        self.between_floors = 6
+        self.between_floors = 4
         self.verbose = False  # Print-monitoring
         self.floors = []
         self.elevators = []
         self.attended = []
-        self.simulation = self.get_simulation('up')
+        self.passager_flow = passager_flow
+        self.simulation = self.get_simulation(passager_flow)
 
         # Create elevators
         for i in range(self.num_elevators):
@@ -130,7 +153,14 @@ class Modelo(Model):
         self.schedule.step()
         #print(self.schedule.get_agent_count)
         self.datacollector.collect(self)
-        
+
+        #se nao tem mais passageiros pra chegar nem pra ser atendido
+        #cria um csv com os dados
+        #so uma vez
+        if not self.gerado_saida and self.schedule.time > 500:
+            self.gerado_saida = True
+            save_file_results(self)
+
 
     def run_model(self, step_count=2000):
 

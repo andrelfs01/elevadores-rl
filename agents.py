@@ -273,6 +273,8 @@ class FloorAgent(Agent):
     def select_car(self, passager):
         if True:
             return self.baseline(passager)
+        else:
+            return self.rl_algorithm(passager)
 
     def baseline(self, passager):
         #se passageiro subindo
@@ -294,3 +296,14 @@ class FloorAgent(Agent):
                 return e
         
         return -1
+
+    #reforço
+    def rl_algorithm(self, passager):
+        pass
+
+    #rede neural?
+    def nn_algorithm(self, passager):
+        pass
+
+    #GA para parametrizacao
+

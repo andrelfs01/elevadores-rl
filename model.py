@@ -15,7 +15,6 @@ import statistics
 from datetime import datetime
 import sys
 
-
 def save_file_results(model):
     passagers = model.attended
     if len(passagers) > 0:
@@ -144,7 +143,6 @@ class Modelo(Model):
                 "TotalTime": get_total_time,
                 "WaitingFloor": get_waiting_floor})
 
-
     def step(self):
         #aqui vai a logica do fluxo de passageiros
         #chegada de passageiros 
@@ -172,6 +170,8 @@ class Modelo(Model):
 
         for i in range(step_count):
             self.step()
+            
+            time.sleep(1) # Sleep for 3 seconds
 
     def get_simulation(self, fluxo):
         #le o arquivo de fluxos
@@ -196,3 +196,15 @@ class Modelo(Model):
             with open('resources/traff_poisson.txt', 'r') as f:
                 traff_poisson = json.loads(f.read())
                 return traff_poisson
+
+    #GA para parametrizacao
+    def ga_optimization(self):
+        pass
+
+    #reforço
+    def rl_algorithm(self, passager):
+        pass
+
+    #rede neural?
+    def nn_algorithm(self, passager):
+        pass

@@ -238,12 +238,7 @@ class FloorAgent(Agent):
         #se chegou passageiro
         if (self.next_passager[1] < self.model.schedule.time):
             #0: id, 1: previsao chegada, 2: setar como chegada, 3: andar origem, 4: andar destino
-            #print("andar:",self.number)
-            #print("previsao: ",self.next_passager[1])
-            #print("origem: ",self.next_passager[3])
-            #print("destino: ",self.next_passager[4])
-            #print("---------------------")
-           
+                    
             #cria o passageiro
             p = PassagerAgent("p_"+str(self.next_passager[0]), self.pos, self.model, self.next_passager[3], self.next_passager[4], self.model.schedule.time)
             #define o carro
@@ -297,13 +292,29 @@ class FloorAgent(Agent):
         
         return -1
 
-    #reforço
-    def rl_algorithm(self, passager):
-        pass
+    def dist_d(self, passageiro):
+        '''
+        Distancia definida pelo numero de andares ate o carro passar pelo andar no sentido desejado
+        '''
+        #completar o caminho e voltar ao anda na direcao do passageiro
+        return 0
+    
+    def n_floor(self, passager):
+        '''
+        Numero esperado de paradas ate o carro passar pelo andar no sentido desejado
+        '''
+        #numero de andares que vai parar ate atender o passageiro 
+        return 0
 
-    #rede neural?
-    def nn_algorithm(self, passager):
-        pass
+    #fitness
+    def fitness_algorithm(self, passager, alpha, betha, tetha):
+        '''
+        Funcao fitness para um carro atender o passageiro determinado com os parametros definidos
+        '''
+        return (alpha * self.dist_d(passager)) + (betha * len(self.destination)) + (tetha * self.n_floor(passager))
 
-    #GA para parametrizacao
+
+
+
+
 

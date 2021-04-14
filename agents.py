@@ -46,13 +46,16 @@ class ElevatorAgent(Agent):
     state = 3
     cont = 0
 
-    def __init__(self, unique_id, pos, model):
+    def __init__(self, unique_id, pos, model, alpha=0,beta=0,theta=0):
         super().__init__(unique_id, model)
         self.pos = pos
         self.unique_id = unique_id
         self.destination = []
         self.passageiros = []
         self.cont = 0
+        self.alpha = alpha
+        self.beta = beta
+        self.theta = theta
         
     def step(self):
         #se esta movendo, continua
@@ -266,10 +269,10 @@ class FloorAgent(Agent):
         return simulation[self.number]
 
     def select_car(self, passager):
-        if True:
+        if self.model.controller == 'baseline':
             return self.baseline(passager)
         else:
-            return self.rl_algorithm(passager)
+            return self.fitness_algorithm(passager, self.alpha, self.beta, self.theta)
 
     def baseline(self, passager):
         #se passageiro subindo
@@ -297,6 +300,11 @@ class FloorAgent(Agent):
         Distancia definida pelo numero de andares ate o carro passar pelo andar no sentido desejado
         '''
         #completar o caminho e voltar ao anda na direcao do passageiro
+        #se subindo e dest > atual ou se descendo e dest < atual
+
+        #se subido e dest < atual
+
+        #se descendo e dest > atual
         return 0
     
     def n_floor(self, passager):
@@ -307,11 +315,23 @@ class FloorAgent(Agent):
         return 0
 
     #fitness
-    def fitness_algorithm(self, passager, alpha, betha, tetha):
+    def fitness_algorithm(self, passager, alpha, beta, theta):
         '''
         Funcao fitness para um carro atender o passageiro determinado com os parametros definidos
         '''
-        return (alpha * self.dist_d(passager)) + (betha * len(self.destination)) + (tetha * self.n_floor(passager))
+
+        best_df = 20000000
+        best_e = None
+
+        #para cada elevador e
+        for e in self.model.elevators:
+            df_e = (alpha * self.dist_d(passager, e)) + (beta * len(e.destination)) + (theta * self.n_floor(passager, e))
+            if df_e < best_df:
+                best_e = e
+                best_df = df_e
+        
+        #return best car
+        return best_e
 
 
 

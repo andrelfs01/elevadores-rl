@@ -4,6 +4,7 @@ from mesa.time import RandomActivation
 from mesa.datacollection import DataCollector
 
 from agents import ElevatorAgent, PassagerAgent, FloorAgent
+import numpy as np
 
 from random import uniform
 import math
@@ -94,7 +95,7 @@ class Modelo(Model):
     attended = []
     gerado_saida = False
 
-    def __init__(self, elevators=4, floors=16, a = 0, passager_flow='random'):
+    def __init__(self, elevators=4, floors=16, a = 0, passager_flow='random', controller='baseline', alpha = 1, beta = 1, theta = 1):
         super().__init__()
         #self.running = True
         self.num_elevators = elevators
@@ -109,11 +110,15 @@ class Modelo(Model):
         self.attended = []
         self.passager_flow = passager_flow
         self.simulation = self.get_simulation(passager_flow)
+        self.alpha = alpha
+        self.beta = beta
+        self.theta = theta
+        self.controller = controller
 
         # Create elevators
         for i in range(self.num_elevators):
             # Add the agent to a random grid cell
-            a = ElevatorAgent("e_"+str(i), (i+1, 0), self)
+            a = ElevatorAgent("e_"+str(i), (i+1, 0), self, self.alpha, self.beta, self.theta)
             #seta todos UP
             #
             #estado de todos é 5 (0 =fora d servico, 1 = parado com viagem para baixo, 2 = parado com viagem para cima, 3 = sem missao, 4 = descendo, 5 = subindo)
@@ -170,8 +175,7 @@ class Modelo(Model):
 
         for i in range(step_count):
             self.step()
-            
-            time.sleep(1) # Sleep for 3 seconds
+            print("step: ", i)
 
     def get_simulation(self, fluxo):
         #le o arquivo de fluxos
@@ -197,14 +201,4 @@ class Modelo(Model):
                 traff_poisson = json.loads(f.read())
                 return traff_poisson
 
-    #GA para parametrizacao
-    def ga_optimization(self):
-        pass
 
-    #reforço
-    def rl_algorithm(self, passager):
-        pass
-
-    #rede neural?
-    def nn_algorithm(self, passager):
-        pass

@@ -33,22 +33,25 @@ def ga_fitness(passagers):
 
     return fitness
 
+def calc_fitness(results):
+    return results['total_time']/2
 
 def select_thebests(pop, num):
     bests = []
     while len(bests) < num:
-        bests.append(max(pop,key=itemgetter(1)))
-        pop.remove(max(pop,key=itemgetter(1)))
-    bests[0][1] = 1
-    bests[1][1] = 1
+        bests.append(min(pop,key=itemgetter(1)))
+        pop.remove(min(pop,key=itemgetter(1)))
+
+    print(bests)
+    print(pop)
     return bests, pop
 
 def tournament(pop, num_tournament_competitors, cross_prob):
     parents = []
     childs = []
     while len(parents) < num_tournament_competitors:
-        parents.append(max(pop,key=itemgetter(1)))
-        pop.remove(max(pop,key=itemgetter(1)))
+        parents.append(min(pop,key=itemgetter(1)))
+        pop.remove(min(pop,key=itemgetter(1)))
 
     while len(childs) < (cross_prob * population_size):
         idx_dad = random.randint(low = 0, high = len(parents) -1 )
@@ -58,11 +61,10 @@ def tournament(pop, num_tournament_competitors, cross_prob):
         random_mom = parents[idx_mom][0]
 
         point = random.randint(1, len(random_dad) -2)
-        print(point)
         c1 = list(random_dad[:point]) + list(random_mom[point:])
         c2 = list(random_mom[:point]) + list(random_dad[point:])
-        childs.append((c1,0))
-        childs.append((c2,0))
+        childs.append([c1,999999])
+        childs.append([c2,999999])
 
     if len(parents) + len (childs) < len(pop):
         print("ERROR")
@@ -74,16 +76,18 @@ def variate(pop, mutation_prob):
     for i in pop:
         for c in range(len(i[0])):
             if random.uniform(0, 1) <= mutation_prob:
-                print(i[0])
+                #print(i[0])
                 mut = random.randint(1,9)
-                print("mutacao: {} -> {} ".format(i[0][c], mut))
+                #print("mutacao: {} -> {} ".format(i[0][c], mut))
                 i[0][c] = mut
-                print(i[0])
+                #print(i[0])
     return pop
 
 population = None
 #para cada geracao
+results = None
 for gen in range(num_gen):
+    
     #inicia a populacao
     if population is None:
         population = []
@@ -103,22 +107,32 @@ for gen in range(num_gen):
 
         #mutacao
         population = variate(population, mutation_prob)
-
+    
     #para cada individuo
     for i in population:
-        print("individuo:", i)
+        #print(i)
         a = i[0][:4]
         b = i[0][4:8]
         t = i[0][8:]
         alpha = int("".join(map(str, a)))
         beta = int("".join(map(str, b)))
         theta = int("".join(map(str, t)))
-        print (alpha, beta, theta)
-        modelo = Modelo(elevators=4, floors=16, a = 0, passager_flow='up', controller='ga', alpha = alpha, beta = beta, theta = theta)
+        #print (alpha, beta, theta)
+        modelo = Modelo(elevators=4, floors=16, a = 0, passager_flow='up', controller='ga', alpha = alpha, beta = beta, theta = theta, output_file = False)
         
         blockPrint()
         modelo.run_model()
         enablePrint()
-        
-        print(ga_fitness(modelo.attended))
+        print(i)
+    
+        results  = ga_fitness(modelo.attended)
+
+        #calcula o desempenho do individuo
+        i[1] = calc_fitness(results)
+        print(calc_fitness(results))
+        print("-----------------------------------")    
+    #mostra a ultima populacao
+    print(population)
+    #calcular a media da populacao
+    #salvar resultados
 

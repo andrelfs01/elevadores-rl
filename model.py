@@ -95,7 +95,7 @@ class Modelo(Model):
     attended = []
     gerado_saida = False
 
-    def __init__(self, elevators=4, floors=16, a = 0, passager_flow='random', controller='baseline', alpha = 1, beta = 1, theta = 1):
+    def __init__(self, elevators=4, floors=16, a = 0, passager_flow='random', controller='baseline', alpha = 1, beta = 1, theta = 1, output_file = False):
         super().__init__()
         #self.running = True
         self.num_elevators = elevators
@@ -114,6 +114,7 @@ class Modelo(Model):
         self.beta = beta
         self.theta = theta
         self.controller = controller
+        self.gerado_saida = not output_file
 
         # Create elevators
         for i in range(self.num_elevators):
@@ -160,18 +161,12 @@ class Modelo(Model):
         #se nao tem mais passageiros pra chegar nem pra ser atendido
         #cria um csv com os dados
         #so uma vez
-        if not self.gerado_saida and self.schedule.time > 500:
+        if not self.gerado_saida and self.schedule.time > 1998:
             self.gerado_saida = True
             save_file_results(self)
 
 
     def run_model(self, step_count=2000):
-
-        if self.verbose:
-            print('Initial number targets: ',
-                  self.num_agents)
-            print('Initial number observers: ',
-                  self.num_observer_agents)
 
         for i in range(step_count):
             self.step()

@@ -28,20 +28,34 @@ class PassagerAgent(Agent):
         self.incoming = incoming
 
     def step(self):
-        pass   
+        pass
+
+    def to_dict(self):
+        return {
+            'id' : self.unique_id,
+            'from': self.origem,
+            'to': self.destination,
+            'car': self.utilized_car.unique_id,
+            'incoming_time': self.incoming,
+            'boarding_time': self.boarding,
+            'attended_time': self.attended
+        }
 
 class ElevatorAgent(Agent):
     unique_id = 'e_'
     state = 3
     cont = 0
 
-    def __init__(self, unique_id, pos, model):
+    def __init__(self, unique_id, pos, model, alpha=0,beta=0,theta=0):
         super().__init__(unique_id, model)
         self.pos = pos
         self.unique_id = unique_id
         self.destination = []
         self.passageiros = []
         self.cont = 0
+        self.alpha = alpha
+        self.beta = beta
+        self.theta = theta
         
     def step(self):
         #se esta movendo, continua
@@ -143,7 +157,7 @@ class ElevatorAgent(Agent):
                     #se for o carro atribuido
                     # ou se o  carro vai na mesma rota
                     print("EMBARCA?")
-                    if p.car_designed == self or (self.state == 3) or (self.state in (1,4) and p.destination < p.origem) or (self.state in (2,5) and p.destination > p.origem):
+                    if (p.car_designed == self or (self.state == 3) or (self.state in (1,4) and p.destination < p.origem) or (self.state in (2,5) and p.destination > p.origem)) and len(self.passageiros) < 15:
                         #se o carro esta ok, embarca
                         if (self.state != 0):
                             print("embarque")
@@ -156,9 +170,13 @@ class ElevatorAgent(Agent):
                             remover.append(p)
                     else:
                         print("nao embarcou *****************")
+                        if len(self.passageiros) >= 15:
+                            print("lotado *****************")
+                print("tinha {} passageiros e embarcaram {}".format(len(f.passageiros), len(remover)))
+                
                 for p in remover:
                     f.passageiros.remove(p)
-                            
+                print("ficaram {} passageiros ".format(len(f.passageiros)))            
     
     def check_destination(self):
         print(self.unique_id, self.destination)
@@ -213,7 +231,13 @@ class FloorAgent(Agent):
         #se tem algum passageiro sem carro atribuido
         for p in self.passageiros:
             if p.car_designed == -1:
-                e = self.select_car(p)
+                #aperta o botao
+                if (p.destination > self.number):
+                    bt = 'up'
+                else:
+                    bt = 'down'
+
+                e = self.select_car(p, bt)
                 if e != -1:
                     p.car_designed = e
                     if self.number not in e.destination:
@@ -223,16 +247,20 @@ class FloorAgent(Agent):
         #se chegou passageiro
         if (self.next_passager[1] < self.model.schedule.time):
             #0: id, 1: previsao chegada, 2: setar como chegada, 3: andar origem, 4: andar destino
-            #print("andar:",self.number)
-            #print("previsao: ",self.next_passager[1])
-            #print("origem: ",self.next_passager[3])
-            #print("destino: ",self.next_passager[4])
-            #print("---------------------")
-           
+                    
             #cria o passageiro
             p = PassagerAgent("p_"+str(self.next_passager[0]), self.pos, self.model, self.next_passager[3], self.next_passager[4], self.model.schedule.time)
+            
+            #aperta o botao
+            if (self.next_passager[4] > self.number):
+                self.up_button = True
+                bt = 'up'
+            else:
+                self.down_button = True
+                bt = 'down'
+
             #define o carro
-            e = self.select_car(p)
+            e = self.select_car(p, bt)
             if e != -1:
                 if self.number not in e.destination:
                     e.destination.append(self.number)
@@ -242,11 +270,7 @@ class FloorAgent(Agent):
             self.model.grid.place_agent(p, self.pos)
             #add na fila
             self.passageiros.append(p)
-            #aperta o botao
-            if (self.next_passager[4] > self.number):
-                self.up_button = True
-            else:
-                self.down_button = True
+            
 
             #proximo
             self.next_passager = self.flow.pop()
@@ -255,9 +279,11 @@ class FloorAgent(Agent):
     def get_flow(self, simulation):
         return simulation[self.number]
 
-    def select_car(self, passager):
-        if True:
+    def select_car(self, passager, button):
+        if self.model.controller == 'baseline':
             return self.baseline(passager)
+        else:
+            return self.fitness_algorithm(button, self.model.alpha, self.model.beta, self.model.theta)
 
     def baseline(self, passager):
         #se passageiro subindo
@@ -279,3 +305,102 @@ class FloorAgent(Agent):
                 return e
         
         return -1
+
+    def dist_d(self, button, car):
+        '''
+        Distancia definida pelo numero de andares ate o carro passar pelo andar no sentido desejado
+        '''
+        # se subindo e dest < atual
+        if ((car.state == 2 or car.state == 5) and button == 'up'):
+            if (car.pos[1]/2 < self.number):
+                # modulo de atual - dest
+                return abs(int(car.pos[1]/2) - self.number)
+            else:
+                #pior caso
+                return abs(max(car.destination,default = 0) - car.pos[1]/2) + max(car.destination,default = 0) + self.number
+
+        #se descendo e dest > atual ou
+        elif ((car.state == 1 or car.state == 4) and button == 'down'):
+            if (car.pos[1]/2 > self.number):
+                return abs(int(car.pos[1]/2) - self.number)
+            else:
+                #pior caso
+                return abs(min(car.destination,default = 0) - car.pos[1]/2) + (len(self.model.floors) -1) + ((len(self.model.floors) -1) - self.number)
+
+        #se subido e dest < atual
+        elif ((car.state == 2 or car.state == 5) and button == 'down'):
+            # (topo - atual) + (topo - dest)
+            return (abs(max(car.destination,default = 0) - self.number) + abs(max(car.destination,default = 0) - car.pos[1]/2))
+
+        #se descendo e dest > atual
+        elif ((car.state == 1 or car.state == 4) and button == 'up'):
+            return abs(self.number - min(car.destination)) + abs(car.pos[1]/2 - min(car.destination))
+
+        elif (car.state == 3):
+            return abs(int(car.pos[1]/2) - self.number)
+
+    def n_floor(self, button, car):
+        '''
+        Numero esperado de paradas ate o carro passar pelo andar no sentido desejado
+        '''
+        #numero de andares que vai parar ate atender o passageiro 
+        # se subindo e dest < atual
+        if ((car.state == 2 or car.state == 5) and button == 'up'):
+            if (car.pos[1]/2 < self.number):
+                # modulo de atual - dest
+                return len(list(filter(lambda x: x > int(car.pos[1]/2) and x < self.number, car.destination)))
+            else:
+                #pior caso
+                return len(car.destination)
+
+        #se descendo e dest > atual ou
+        elif ((car.state == 1 or car.state == 4) and button == 'down'):
+            if (car.pos[1]/2 > self.number):
+                return len(list(filter(lambda x: x < int(car.pos[1]/2) and x > self.number, car.destination)))
+            else:
+                #pior caso
+                return len(car.destination)
+
+        #se subido e dest < atual
+        elif ((car.state == 2 or car.state == 5) and button == 'down'):
+            # (topo - atual) + (topo - dest)
+            return len(list(filter(lambda x: x > int(car.pos[1]/2) and x > self.number, car.destination)))
+
+        #se descendo e dest > atual
+        elif ((car.state == 1 or car.state == 4) and button == 'up'):
+            return len(list(filter(lambda x: x < int(car.pos[1]/2) and x < self.number, car.destination)))
+
+        elif (car.state == 3):
+            return len(car.destination)
+
+    #fitness
+    def fitness_algorithm(self, button, alpha, beta, theta):
+        '''
+        Funcao fitness para um carro atender o passageiro determinado com os parametros definidos
+        '''
+
+        best_df = 20000000
+        best_e = -1
+
+        #para cada elevador e
+        for e in self.model.elevators:
+            print('1',alpha)
+            print('2',beta)
+            print('3',theta)
+            print('4',self.dist_d(button, e))
+            print('5',len(e.destination))
+            print('6',self.n_floor(button, e))
+
+            df_e = (alpha * self.dist_d(button, e)) + (beta * len(e.destination)) + (theta * self.n_floor(button, e))
+            if df_e < best_df:
+                best_e = e
+                best_df = df_e
+        
+        #return best car
+        return best_e
+
+
+
+
+
+

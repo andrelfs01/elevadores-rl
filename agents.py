@@ -18,6 +18,9 @@ class PassagerAgent(Agent):
     incoming = -1
     boarding = -1
     attended = -1
+    dist_d = -1
+    n_call = -1
+    n_floor = -1
 
     def __init__(self, unique_id, pos, model, origem, destination, incoming):
         super().__init__(unique_id, model)
@@ -38,7 +41,10 @@ class PassagerAgent(Agent):
             'car': self.utilized_car.unique_id,
             'incoming_time': self.incoming,
             'boarding_time': self.boarding,
-            'attended_time': self.attended
+            'attended_time': self.attended,
+            'dist_d' : self.dist_d,
+            'n_call' : self.n_call,
+            'n_floor' : self.n_floor
         }
 
 class ElevatorAgent(Agent):
@@ -100,7 +106,7 @@ class ElevatorAgent(Agent):
 
     def move(self):
 
-        #se estiver subindo pos + 1
+        #se estiver descendo pos + 1
         new_pos = self.pos
         x, y = self.pos
         if (self.state == 4 ):
@@ -113,7 +119,7 @@ class ElevatorAgent(Agent):
                 new_pos = x, y - 1
                 self.cont = 0
         
-        #se estiver descendo pos + 1
+        #se estiver subindo pos + 1
         if (self.state == 5 ):
             if (self.pos[1] == self.model.grid.height - 1):
                 self.state = 3
@@ -237,8 +243,11 @@ class FloorAgent(Agent):
                 else:
                     bt = 'down'
 
-                e = self.select_car(p, bt)
+                e, _dist_d, _ncall, _nfloor = self.select_car(p, bt)
                 if e != -1:
+                    p.n_call = _ncall
+                    p.n_floor = _nfloor
+                    p.dist_d = _dist_d
                     p.car_designed = e
                     if self.number not in e.destination:
                         e.destination.append(self.number)
@@ -260,10 +269,13 @@ class FloorAgent(Agent):
                 bt = 'down'
 
             #define o carro
-            e = self.select_car(p, bt)
+            e, _dist_d, _ncall, _nfloor = self.select_car(p, bt)
             if e != -1:
                 if self.number not in e.destination:
                     e.destination.append(self.number)
+                    p.n_call = _ncall
+                    p.n_floor = _nfloor
+                    p.dist_d = _dist_d
                     p.car_designed = e
             
             self.model.schedule.add(p)
@@ -281,7 +293,7 @@ class FloorAgent(Agent):
 
     def select_car(self, passager, button):
         if self.model.controller == 'baseline':
-            return self.baseline(passager)
+            return (self.baseline(passager), -1, -1, -1)
         else:
             return self.fitness_algorithm(button, self.model.alpha, self.model.beta, self.model.theta)
 
@@ -397,7 +409,7 @@ class FloorAgent(Agent):
                 best_df = df_e
         
         #return best car
-        return best_e
+        return (best_e, self.dist_d(button, e), len(e.destination), self.n_floor(button, e) )
 
 
 

@@ -98,9 +98,9 @@ class Modelo(Model):
     def __init__(self, elevators=4, floors=16, a = 0, passager_flow='random', controller='baseline', alpha = 1, beta = 1, theta = 1, output_file = False):
         super().__init__()
         #self.running = True
-        self.num_elevators = elevators
-        self.num_floors = floors
-        self.grid = MultiGrid(int(elevators+1), int(floors*2)-1, False)
+        self.num_elevators = int(elevators)
+        self.num_floors = int(floors)
+        self.grid = MultiGrid(int(elevators)+1, (int(floors)*2)-1, False)
         self.schedule = RandomActivation(self)
         self.a = a
         self.between_floors = 4
@@ -155,7 +155,7 @@ class Modelo(Model):
         
         #lista de botoes
         self.schedule.step()
-        #print(self.schedule.get_agent_count)
+        print(self.schedule.get_agent_count)
         self.datacollector.collect(self)
 
         #se nao tem mais passageiros pra chegar nem pra ser atendido

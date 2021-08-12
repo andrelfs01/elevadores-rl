@@ -87,7 +87,7 @@ population = None
 #para cada geracao
 results = None
 for gen in range(num_gen):
-    
+    print ("gen {}".format(gen))
     #inicia a populacao
     if population is None:
         population = []
@@ -118,7 +118,11 @@ for gen in range(num_gen):
         beta = int("".join(map(str, b)))
         theta = int("".join(map(str, t)))
         #print (alpha, beta, theta)
-        modelo = Modelo(elevators=4, floors=16, a = 0, passager_flow='up', controller='ga', alpha = alpha, beta = beta, theta = theta, output_file = False)
+        
+        if gen % 1 == 0:
+            modelo = Modelo(elevators=sys.argv[1], floors=sys.argv[2], a = sys.argv[3], passager_flow=sys.argv[4], controller=sys.argv[5], alpha = alpha, beta = beta, theta = theta, output_file = True)
+        else:
+            modelo = Modelo(elevators=sys.argv[1], floors=sys.argv[2], a = sys.argv[3], passager_flow=sys.argv[4], controller=sys.argv[5], alpha = alpha, beta = beta, theta = theta, output_file = False)
         
         blockPrint()
         modelo.run_model()

@@ -1,0 +1,15 @@
+from               8.137546
+to                 0.000000
+incoming_time    416.174721
+boarding_time    461.784387
+attended_time    530.966543
+dist_d            11.994424
+n_call             2.081784
+n_floor            1.003717
+waiting_time      45.609665
+journey_time      69.182156
+total_time       114.791822
+dtype: float64
+alpha: 4440
+beta: 2261
+theta: 5714

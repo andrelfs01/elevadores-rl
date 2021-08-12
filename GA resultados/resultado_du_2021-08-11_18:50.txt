@@ -1,0 +1,15 @@
+from               7.150943
+to                 0.823899
+incoming_time    457.528302
+boarding_time    484.704403
+attended_time    531.283019
+dist_d            13.408805
+n_call             1.477987
+n_floor            0.924528
+waiting_time      27.176101
+journey_time      46.578616
+total_time        73.754717
+dtype: float64
+alpha: 7121
+beta: 7558
+theta: 4466

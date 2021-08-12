@@ -13,8 +13,8 @@ passager_flow = 'up'      #
 #passager_flow = 'poison'  # 
 
 #choose one
-# controller = 'baseline'
-controller = 'ga'
+controller = 'baseline'
+#controller = 'ga'
 #controller = 'nn'
 
 
@@ -26,5 +26,13 @@ if controller == 'baseline':
     modelo = Modelo(elevators=4, floors=16, a = 0, passager_flow='up', controller='baseline', alpha = alpha, beta = beta, theta = theta, output_file = True)
     modelo.run_model()
 
+    # modelo = Modelo(elevators=4, floors=16, a = 0, passager_flow='du', controller='baseline', alpha = alpha, beta = beta, theta = theta, output_file = True)
+    # modelo.run_model()
+
+    # modelo = Modelo(elevators=4, floors=16, a = 0, passager_flow='dp', controller='baseline', alpha = alpha, beta = beta, theta = theta, output_file = True)
+    # modelo.run_model()
+
+
 elif controller == 'ga':
     os.system("python3 ga_optimization.py "+num_elevators+" "+num_floors+" 0 "+passager_flow+" "+controller)
+    

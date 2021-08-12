@@ -252,6 +252,10 @@ class FloorAgent(Agent):
                     if self.number not in e.destination:
                         e.destination.append(self.number)
 
+                else:
+                    print("error")
+                    #exit()
+
 
         #se chegou passageiro
         if (self.next_passager[1] < self.model.schedule.time):
@@ -271,12 +275,15 @@ class FloorAgent(Agent):
             #define o carro
             e, _dist_d, _ncall, _nfloor = self.select_car(p, bt)
             if e != -1:
+                p.n_call = _ncall
+                p.n_floor = _nfloor
+                p.dist_d = _dist_d
+                p.car_designed = e
                 if self.number not in e.destination:
                     e.destination.append(self.number)
-                    p.n_call = _ncall
-                    p.n_floor = _nfloor
-                    p.dist_d = _dist_d
-                    p.car_designed = e
+            else:
+                print("error")
+                #exit()        
             
             self.model.schedule.add(p)
             self.model.grid.place_agent(p, self.pos)
@@ -329,7 +336,7 @@ class FloorAgent(Agent):
                 return abs(int(car.pos[1]/2) - self.number)
             else:
                 #pior caso
-                return abs(max(car.destination,default = 0) - car.pos[1]/2) + max(car.destination,default = 0) + self.number
+                return abs(abs(max(car.destination,default = 0) - car.pos[1]/2) + max(car.destination,default = 0) + self.number)
 
         #se descendo e dest > atual ou
         elif ((car.state == 1 or car.state == 4) and button == 'down'):
@@ -337,12 +344,12 @@ class FloorAgent(Agent):
                 return abs(int(car.pos[1]/2) - self.number)
             else:
                 #pior caso
-                return abs(min(car.destination,default = 0) - car.pos[1]/2) + (len(self.model.floors) -1) + ((len(self.model.floors) -1) - self.number)
+                return abs(abs(min(car.destination,default = 0) - car.pos[1]/2) + (len(self.model.floors) -1) + ((len(self.model.floors) -1) - self.number))
 
         #se subido e dest < atual
         elif ((car.state == 2 or car.state == 5) and button == 'down'):
             # (topo - atual) + (topo - dest)
-            return (abs(max(car.destination,default = 0) - self.number) + abs(max(car.destination,default = 0) - car.pos[1]/2))
+            return abs(abs(max(car.destination,default = 0) - self.number) + abs(max(car.destination,default = 0) - car.pos[1]/2))
 
         #se descendo e dest > atual
         elif ((car.state == 1 or car.state == 4) and button == 'up'):
@@ -391,7 +398,7 @@ class FloorAgent(Agent):
         Funcao fitness para um carro atender o passageiro determinado com os parametros definidos
         '''
 
-        best_df = 20000000
+        best_df = None
         best_e = -1
 
         #para cada elevador e
@@ -404,7 +411,7 @@ class FloorAgent(Agent):
             print('6',self.n_floor(button, e))
 
             df_e = (alpha * self.dist_d(button, e)) + (beta * len(e.destination)) + (theta * self.n_floor(button, e))
-            if df_e < best_df:
+            if best_df is None or df_e < best_df:
                 best_e = e
                 best_df = df_e
         

@@ -2,7 +2,7 @@ from mesa import Model
 from mesa.space import MultiGrid
 from mesa.time import RandomActivation
 from mesa.datacollection import DataCollector
-
+import os
 from agents import ElevatorAgent, PassagerAgent, FloorAgent
 import numpy as np
 
@@ -25,13 +25,18 @@ def save_file_results(model):
         df["total_time"] = (df["attended_time"] - df["incoming_time"])
 
         now = datetime.now()
-        df.to_csv('saida_'+model.passager_flow+"_"+now.strftime("%Y-%m-%d_%H:%M")+".csv", index=False, sep=';')
+        #df.to_csv('saida_'+model.passager_flow+"_"+now.strftime("%Y-%m-%d_%H:%M")+".csv", index=False, sep=';')
+        df.to_csv('base_full.csv',mode='a', header = False, index=False, sep=',')
+
 
         #calcula medias e salva em txt
         original_stdout = sys.stdout # Save a reference to the original standard output
         with open('resultado_'+model.passager_flow+"_"+now.strftime("%Y-%m-%d_%H:%M")+".txt", 'w') as f:
             sys.stdout = f # Change the standard output to the file we created.
             print(df.mean(axis=0))
+            print("alpha: {}".format(model.alpha))
+            print("beta: {}".format(model.beta))
+            print("theta: {}".format(model.theta))
             sys.stdout = original_stdout # Reset the standard output to its original value
 
 def get_floors(model):

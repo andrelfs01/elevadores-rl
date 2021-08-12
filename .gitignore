@@ -3,7 +3,7 @@ __pycache__/
 *.py[cod]
 *$py.class
 resultado_*.txt
-saida_*.csv
+
 
 # C extensions
 *.so

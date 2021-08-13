@@ -163,7 +163,21 @@ class ElevatorAgent(Agent):
                     #se for o carro atribuido
                     # ou se o  carro vai na mesma rota
                     print("EMBARCA?")
-                    if (p.car_designed == self or (self.state == 3) or (self.state in (1,4) and p.destination < p.origem) or (self.state in (2,5) and p.destination > p.origem)) and len(self.passageiros) < 15:
+                    if (p.car_designed is None):
+                        if (self.state == 3):
+                            p.car_designed = self
+                            if f.number not in self.destination:
+                                self.destination.append(f.number)
+                        else:
+                            print("sem designado")
+                            if (p.destination > f.number):
+                                bt = 'up'
+                            else:
+                                bt = 'down'
+                            f.select_car(p, bt)
+                    #print ("{} designado | carro {} ".format(p.car_designed.unique_id, self.unique_id))
+                    #if (p.car_designed == self or (self.state == 3) or (self.state in (1,4) and p.destination < p.origem) or (self.state in (2,5) and p.destination > p.origem)) and len(self.passageiros) < 15:
+                    if (p.car_designed == self and len(self.passageiros) < 15):
                         #se o carro esta ok, embarca
                         if (self.state != 0):
                             print("embarque")
@@ -309,14 +323,14 @@ class FloorAgent(Agent):
         if passager.destination > passager.origem:
             # se tem carro subindo e em pisso inferior, atribui
             for e in self.model.elevators:
-                if (e.state == 2 or e.state == 5) and ((e.pos[1] / 2) < self.number):
+                if (e.state == 2 or e.state == 5) and ((e.pos[1] / 2) <= self.number):
                     return e
             
         #se passageiro descendo
         if passager.destination < passager.origem:
             # se tem carro descendo e em pisso superior, atribui
             for e in self.model.elevators:
-                if (e.state == 1 or e.state == 4) and ((e.pos[1] / 2) > self.number):
+                if (e.state == 1 or e.state == 4) and ((e.pos[1] / 2) >= self.number):
                     return e
         # se nao conseguiu aproveitar um carro em movimento, astribui um carro sem missao
         for e in self.model.elevators:

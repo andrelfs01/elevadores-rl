@@ -100,7 +100,7 @@ class Modelo(Model):
     attended = []
     gerado_saida = False
 
-    def __init__(self, elevators=4, floors=16, a = 0, passager_flow='random', controller='baseline', alpha = 1, beta = 1, theta = 1, output_file = False):
+    def __init__(self, elevators=4, floors=16, a = 0, passager_flow='up', controller='baseline', alpha = 1, beta = 1, theta = 1, output_file = False):
         super().__init__()
         #self.running = True
         self.num_elevators = int(elevators)

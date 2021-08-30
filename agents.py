@@ -5,6 +5,8 @@ from random import uniform
 import math
 import time
 import numpy as np
+from copy import copy
+
 #from cto.random_walk import RandomWalker
 
 
@@ -21,6 +23,10 @@ class PassagerAgent(Agent):
     dist_d = -1
     n_call = -1
     n_floor = -1
+    pos_car_call = -1
+    dir_car_call = -1
+    buttons_car_call = -1
+    floor_car_call = -1
 
     def __init__(self, unique_id, pos, model, origem, destination, incoming):
         super().__init__(unique_id, model)
@@ -44,8 +50,15 @@ class PassagerAgent(Agent):
             'attended_time': self.attended,
             'dist_d' : self.dist_d,
             'n_call' : self.n_call,
-            'n_floor' : self.n_floor
+            'n_floor' : self.n_floor,
+            'car_position_call': self.pos_car_call,
+            'car_direction_call': self.dir_car_call,
+            'car_queue_buttons': self.buttons_car_call,
+            'car_queue_floor': self.floor_car_call
         }
+
+    def __getitem__(self,key):
+        return getattr(self,key)
 
 class ElevatorAgent(Agent):
     unique_id = 'e_'
@@ -103,6 +116,9 @@ class ElevatorAgent(Agent):
         #se estiver descendo ou subindo
         elif (self.pos[1] % 2 != 0 and (self.state == 4 or self.state == 5)):
             self.move()
+
+        else:
+            self.check_destination()
 
     def move(self):
 
@@ -166,6 +182,10 @@ class ElevatorAgent(Agent):
                     if (p.car_designed is None):
                         if (self.state == 3):
                             p.car_designed = self
+                            p.pos_car_call = copy((self.pos[1]/2))
+                            p.dir_car_call = copy((self.state))
+                            p.buttons_car_call = len(list(set(x['destination'] for x in self.passageiros)))
+                            p.floor_car_call = len(list(x for x in self.destination if x not in list(set(x['destination'] for x in self.passageiros))))
                             if f.number not in self.destination:
                                 self.destination.append(f.number)
                         else:
@@ -263,6 +283,10 @@ class FloorAgent(Agent):
                     p.n_floor = _nfloor
                     p.dist_d = _dist_d
                     p.car_designed = e
+                    p.pos_car_call = copy((self.pos[1]/2))
+                    p.dir_car_call = copy((self.state))
+                    p.buttons_car_call = len(list(set(x['destination'] for x in self.passageiros)))
+                    p.floor_car_call = len(list(x for x in self.destination if x not in list(set(x['destination'] for x in self.passageiros))))
                     if self.number not in e.destination:
                         e.destination.append(self.number)
 
@@ -293,6 +317,10 @@ class FloorAgent(Agent):
                 p.n_floor = _nfloor
                 p.dist_d = _dist_d
                 p.car_designed = e
+                p.pos_car_call = copy((e.pos[1]/2))
+                p.dir_car_call = copy((e.state))
+                p.buttons_car_call = len(list(set(x['destination'] for x in e.passageiros)))
+                p.floor_car_call = len(list(x for x in e.destination if x not in list(set(x['destination'] for x in e.passageiros))))
                 if self.number not in e.destination:
                     e.destination.append(self.number)
             else:

@@ -7,15 +7,16 @@ num_floors = str(16)
 a = str(0)
 
 #choose one
-passager_flow = 'up'      #
+#passager_flow = 'up'      #
 #passager_flow = 'dp'      #
 #passager_flow = 'du'      #
-#passager_flow = 'poison'  # 
+passager_flow = 'poison'  # 
 
 #choose one
-controller = 'baseline'
+#controller = 'baseline'
 #controller = 'ga'
 #controller = 'nn'
+controller = 'gerar_tabela_q'
 
 
 if controller == 'baseline':
@@ -39,3 +40,13 @@ elif controller == 'ga':
     os.system("python3 ga_optimization.py "+num_elevators+" "+num_floors+" 0 dp "+controller)
     os.system("python3 ga_optimization.py "+num_elevators+" "+num_floors+" 0 du "+controller)
     
+elif controller == 'gerar_tabela_q':
+    modelo = Modelo(elevators=4, floors=16, a = 0, passager_flow='up', controller='ga', alpha = 4688, beta = 3447, theta = 3881, output_file = True)
+    modelo.run_model()
+
+    modelo = Modelo(elevators=4, floors=16, a = 0, passager_flow='up', controller='ga', alpha = 4688, beta = 3447, theta = 3881, output_file = True)
+    modelo.run_model()
+
+
+    modelo = Modelo(elevators=4, floors=16, a = 0, passager_flow='up', controller='ga', alpha = 4688, beta = 3447, theta = 3881, output_file = True)
+    modelo.run_model()

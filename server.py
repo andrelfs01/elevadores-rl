@@ -54,9 +54,20 @@ class Contador(TextElement):
 text_element = Contador()
 canvas_element = CanvasGrid(elev_portrayal, 5, 31, 200, 800)
 
+# model_params = {                
+#                 "elevators": 4,
+#                 "floors": 16,
+#                 "a": UserSettableParameter('slider', 'a', 0.01, 0.01, 2)}
+
 model_params = {                
                 "elevators": 4,
                 "floors": 16,
+                "passager_flow" : 'poisson', 
+                "controller" : 'ga',
+                "alpha" : 4688,
+                "beta" : 3447,
+                "theta" : 3881, 
+                "output_file" : True,
                 "a": UserSettableParameter('slider', 'a', 0.01, 0.01, 2)}
 
 # map data to chart in the ChartModule

@@ -31,7 +31,7 @@ def save_file_results(model):
 
         #calcula medias e salva em txt
         original_stdout = sys.stdout # Save a reference to the original standard output
-        with open('resultado_'+model.passager_flow+"_"+now.strftime("%Y-%m-%d_%H:%M")+".txt", 'w') as f:
+        with open('resultado_'+model.controller+'_'+model.passager_flow+"_"+now.strftime("%Y-%m-%d_%H:%M")+".txt", 'w') as f:
             sys.stdout = f # Change the standard output to the file we created.
             print(df.mean(axis=0))
             print("alpha: {}".format(model.alpha))
@@ -105,10 +105,10 @@ class Modelo(Model):
         #self.running = True
         self.num_elevators = int(elevators)
         self.num_floors = int(floors)
-        self.grid = MultiGrid(int(elevators)+1, (int(floors)*2)-1, False)
+        self.grid = MultiGrid(int(elevators)+1, (int(floors)), False)
         self.schedule = RandomActivation(self)
         self.a = a
-        self.between_floors = 4
+        self.between_floors = 6
         self.verbose = False  # Print-monitoring
         self.floors = []
         self.elevators = []
@@ -134,9 +134,9 @@ class Modelo(Model):
 
         # Create floors
         for i in range(self.num_floors):
-            a = FloorAgent("f_"+str(i), i, (0, i*2), self)
+            a = FloorAgent("f_"+str(i), i, (0, i), self)
             self.schedule.add(a)
-            self.grid.place_agent(a, (0, i*2))
+            self.grid.place_agent(a, (0, i))
             self.floors.append(a)
 
         #tempo medio de espera

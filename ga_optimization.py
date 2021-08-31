@@ -42,8 +42,8 @@ def select_thebests(pop, num):
         bests.append(min(pop,key=itemgetter(1)))
         pop.remove(min(pop,key=itemgetter(1)))
 
-    print(bests)
-    print(pop)
+    #print(bests)
+    #print(pop)
     return bests, pop
 
 def tournament(pop, num_tournament_competitors, cross_prob):
@@ -86,6 +86,10 @@ def variate(pop, mutation_prob):
 population = None
 #para cada geracao
 results = None
+best = None
+best_alpha = 0
+best_beta = 0
+best_theta = 0
 for gen in range(num_gen):
     print ("gen {}".format(gen))
     #inicia a populacao
@@ -119,7 +123,7 @@ for gen in range(num_gen):
         theta = int("".join(map(str, t)))
         #print (alpha, beta, theta)
         
-        if gen % 1 == 0:
+        if gen % 1000 == 0:
             modelo = Modelo(elevators=sys.argv[1], floors=sys.argv[2], a = sys.argv[3], passager_flow=sys.argv[4], controller=sys.argv[5], alpha = alpha, beta = beta, theta = theta, output_file = True)
         else:
             modelo = Modelo(elevators=sys.argv[1], floors=sys.argv[2], a = sys.argv[3], passager_flow=sys.argv[4], controller=sys.argv[5], alpha = alpha, beta = beta, theta = theta, output_file = False)
@@ -127,16 +131,28 @@ for gen in range(num_gen):
         blockPrint()
         modelo.run_model()
         enablePrint()
-        print(i)
+        #print(i)
     
         results  = ga_fitness(modelo.attended)
 
+        if best is None or results['total_time'] < best:
+            best = results['total_time']
+            best_alpha = alpha
+            best_beta = beta
+            best_theta = theta
+            print("best = {}".format(best))
+
         #calcula o desempenho do individuo
         i[1] = calc_fitness(results)
-        print(calc_fitness(results))
-        print("-----------------------------------")    
+        #print(calc_fitness(results))
+        #print("-----------------------------------")    
     #mostra a ultima populacao
-    print(population)
+    #print(population)
     #calcular a media da populacao
     #salvar resultados
-
+print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")  
+print("best = {}".format(best))
+print("best_alpha = {}".format(best_alpha))
+print("bebest_beta = {}".format(best_beta))
+print("best_theta = {}".format(best_theta))
+print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")  

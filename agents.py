@@ -83,7 +83,7 @@ class ElevatorAgent(Agent):
 
         #se chegou no andar
         elif (self.pos[1] % 2 == 0 and (self.state == 4 or self.state == 5) and self.cont == 0):
-            actual_floor = self.pos[1] / 2 
+            actual_floor = self.pos[1] 
             # verifica se vai parar
             if (actual_floor in self.destination):
                 #tira dos destinos
@@ -157,7 +157,7 @@ class ElevatorAgent(Agent):
         '''
             check if
         '''
-        actual_floor = self.pos[1] / 2 
+        actual_floor = self.pos[1]
         remover = []
         for p in self.passageiros:
             if p.destination == actual_floor:
@@ -171,7 +171,7 @@ class ElevatorAgent(Agent):
             self.passageiros.remove(p)
 
     def check_boarding(self):
-        actual_floor = self.pos[1] / 2 
+        actual_floor = self.pos[1] 
         for f in self.model.floors:
             if f.number == actual_floor:
                 remover = []
@@ -223,7 +223,7 @@ class ElevatorAgent(Agent):
         if not self.destination:
             self.state = 3
         else:
-            actual_floor = self.pos[1] / 2 
+            actual_floor = self.pos[1] 
             if self.state == 3:
                 if self.destination[0] < actual_floor:
                     self.state = 4
@@ -240,7 +240,7 @@ class ElevatorAgent(Agent):
                 else:
                     self.state = 5
             else:
-                actual_floor = self.pos[1] / 2 
+                actual_floor = self.pos[1] 
                 if self.destination[0] == actual_floor and self.cont == 0:
                     self.check_leaving()
                     self.check_boarding()

@@ -41,12 +41,11 @@ elif controller == 'ga':
     os.system("python3 ga_optimization.py "+num_elevators+" "+num_floors+" 0 du "+controller)
     
 elif controller == 'gerar_tabela_q':
-    modelo = Modelo(elevators=4, floors=16, a = 0, passager_flow='up', controller='ga', alpha = 4688, beta = 3447, theta = 3881, output_file = True)
-    modelo.run_model()
+    #modelo = Modelo(elevators=4, floors=16, a = 0, passager_flow='up', controller='ga', alpha = 664, beta = 4788, theta = 3881, output_file = True)
+    #modelo.run_model()
 
-    modelo = Modelo(elevators=4, floors=16, a = 0, passager_flow='up', controller='ga', alpha = 4688, beta = 3447, theta = 3881, output_file = True)
-    modelo.run_model()
+    #modelo = Modelo(elevators=4, floors=16, a = 0, passager_flow='dp', controller='ga', alpha = 6078, beta = 3776, theta = 1657, output_file = True)
+    #modelo.run_model()
 
-
-    modelo = Modelo(elevators=4, floors=16, a = 0, passager_flow='up', controller='ga', alpha = 4688, beta = 3447, theta = 3881, output_file = True)
+    modelo = Modelo(elevators=4, floors=16, a = 0, passager_flow='du', controller='ga', alpha = 7238, beta = 6255, theta = 7536, output_file = True)
     modelo.run_model()

@@ -52,7 +52,7 @@ class Contador(TextElement):
         return "Passageiros atendidos: " + str(len(model.attended))
 
 text_element = Contador()
-canvas_element = CanvasGrid(elev_portrayal, 5, 31, 200, 800)
+canvas_element = CanvasGrid(elev_portrayal, 5, 16, 200, 800)
 
 # model_params = {                
 #                 "elevators": 4,

@@ -26,7 +26,7 @@ def save_file_results(model):
 
         now = datetime.now()
         #df.to_csv('saida_'+model.passager_flow+"_"+now.strftime("%Y-%m-%d_%H:%M")+".csv", index=False, sep=';')
-        df.to_csv('base_full.csv',mode='a', header = False, index=False, sep=',')
+        df.to_csv('resultado_'+model.controller+'_'+model.passager_flow+"_"+'base_full.csv',mode='a', header = False, index=False, sep=',')
 
 
         #calcula medias e salva em txt
@@ -108,7 +108,7 @@ class Modelo(Model):
         self.grid = MultiGrid(int(elevators)+1, (int(floors)), False)
         self.schedule = RandomActivation(self)
         self.a = a
-        self.between_floors = 6
+        self.between_floors = 3
         self.verbose = False  # Print-monitoring
         self.floors = []
         self.elevators = []
@@ -166,12 +166,12 @@ class Modelo(Model):
         #se nao tem mais passageiros pra chegar nem pra ser atendido
         #cria um csv com os dados
         #so uma vez
-        if not self.gerado_saida and self.schedule.time > 1998:
+        if not self.gerado_saida and self.schedule.time > 1198:
             self.gerado_saida = True
             save_file_results(self)
 
 
-    def run_model(self, step_count=2000):
+    def run_model(self, step_count=1200):
 
         for i in range(step_count):
             self.step()

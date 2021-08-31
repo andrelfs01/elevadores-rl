@@ -62,11 +62,11 @@ canvas_element = CanvasGrid(elev_portrayal, 5, 16, 200, 800)
 model_params = {                
                 "elevators": 4,
                 "floors": 16,
-                "passager_flow" : 'poisson', 
-                "controller" : 'ga',
-                "alpha" : 4688,
-                "beta" : 3447,
-                "theta" : 3881, 
+                "passager_flow" : 'dp', 
+                "controller" : 'baseline',
+                "alpha" : 7238,
+                "beta" : 6255,
+                "theta" : 7536, 
                 "output_file" : True,
                 "a": UserSettableParameter('slider', 'a', 0.01, 0.01, 2)}
 

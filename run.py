@@ -36,16 +36,16 @@ if controller == 'baseline':
 
 elif controller == 'ga':
     #os.system("python3 ga_optimization.py "+num_elevators+" "+num_floors+" 0 "+passager_flow+" "+controller)
-    #os.system("python3 ga_optimization.py "+num_elevators+" "+num_floors+" 0 up "+controller)
-    #os.system("python3 ga_optimization.py "+num_elevators+" "+num_floors+" 0 dp "+controller)
+    os.system("python3 ga_optimization.py "+num_elevators+" "+num_floors+" 0 up "+controller)
+    os.system("python3 ga_optimization.py "+num_elevators+" "+num_floors+" 0 dp "+controller)
     os.system("python3 ga_optimization.py "+num_elevators+" "+num_floors+" 0 du "+controller)
     
 elif controller == 'gerar_tabela_q':
-    modelo = Modelo(elevators=4, floors=16, a = 0, passager_flow='up', controller='ga', alpha = 1274, beta = 8847, theta = 6523, output_file = True)
+    modelo = Modelo(elevators=4, floors=16, a = 0, passager_flow='up', controller='ga', alpha = 1117, beta = 8513, theta = 3836, output_file = True)
     modelo.run_model()
 
-    modelo = Modelo(elevators=4, floors=16, a = 0, passager_flow='dp', controller='ga', alpha = 5568, beta = 7267, theta = 2271, output_file = True)
+    modelo = Modelo(elevators=4, floors=16, a = 0, passager_flow='dp', controller='ga', alpha = 3833, beta = 6881, theta = 3564, output_file = True)
     modelo.run_model()
 
-    modelo = Modelo(elevators=4, floors=16, a = 0, passager_flow='du', controller='ga', alpha = 4882, beta = 4225, theta = 3016, output_file = True)
+    modelo = Modelo(elevators=4, floors=16, a = 0, passager_flow='du', controller='ga', alpha = 5838, beta = 6867, theta = 62, output_file = True)
     modelo.run_model()

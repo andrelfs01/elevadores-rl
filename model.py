@@ -1,6 +1,6 @@
 from mesa import Model
 from mesa.space import MultiGrid
-from mesa.time import RandomActivation
+from mesa.time import BaseScheduler #RandomActivation
 from mesa.datacollection import DataCollector
 import os
 from agents import ElevatorAgent, PassagerAgent, FloorAgent
@@ -106,7 +106,7 @@ class Modelo(Model):
         self.num_elevators = int(elevators)
         self.num_floors = int(floors)
         self.grid = MultiGrid(int(elevators)+1, (int(floors)), False)
-        self.schedule = RandomActivation(self)
+        self.schedule = BaseScheduler(self)
         self.a = a
         self.between_floors = 3
         self.verbose = False  # Print-monitoring

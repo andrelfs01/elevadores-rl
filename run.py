@@ -10,7 +10,7 @@ a = str(0)
 #passager_flow = 'up'      #
 #passager_flow = 'dp'      #
 #passager_flow = 'du'      #
-passager_flow = 'poison'  # 
+#passager_flow = 'poison'  # 
 
 #choose one
 #controller = 'baseline'
@@ -41,12 +41,11 @@ elif controller == 'ga':
     os.system("python3 ga_optimization.py "+num_elevators+" "+num_floors+" 0 du "+controller)
     
 elif controller == 'gerar_tabela_q':
-    modelo = Modelo(elevators=4, floors=16, a = 0, passager_flow='up', controller='ga', alpha = 4688, beta = 3447, theta = 3881, output_file = True)
+    modelo = Modelo(elevators=4, floors=16, a = 0, passager_flow='up', controller='ga', alpha = 1117, beta = 8513, theta = 3836, output_file = True)
     modelo.run_model()
 
-    modelo = Modelo(elevators=4, floors=16, a = 0, passager_flow='up', controller='ga', alpha = 4688, beta = 3447, theta = 3881, output_file = True)
+    modelo = Modelo(elevators=4, floors=16, a = 0, passager_flow='dp', controller='ga', alpha = 3833, beta = 6881, theta = 3564, output_file = True)
     modelo.run_model()
 
-
-    modelo = Modelo(elevators=4, floors=16, a = 0, passager_flow='up', controller='ga', alpha = 4688, beta = 3447, theta = 3881, output_file = True)
+    modelo = Modelo(elevators=4, floors=16, a = 0, passager_flow='du', controller='ga', alpha = 5838, beta = 6867, theta = 62, output_file = True)
     modelo.run_model()

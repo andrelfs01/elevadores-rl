@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": "../../../../var/www/html/clustercontrol/lib/Cake/Model/Datasource"
+		},
+		{
+			"path": "."
+		},
+		{
+			"path": "../charts"
+		}
+	],
+	"settings": {}
+}

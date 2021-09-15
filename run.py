@@ -14,10 +14,10 @@ a = str(0)
 #passager_flow = 'poison'  # 
 
 #choose one
-controller = 'baseline'
+#controller = 'baseline'
 #controller = 'ga'
 #controller = 'nn'
-#controller = 'gerar_tabela_q'
+controller = 'gerar_tabela_q'
 
 
 if controller == 'baseline':
@@ -28,11 +28,11 @@ if controller == 'baseline':
     modelo = Modelo(elevators=4, floors=16, a = 0, passager_flow='up', controller='baseline', alpha = alpha, beta = beta, theta = theta, output_file = True)
     modelo.run_model()
 
-    modelo = Modelo(elevators=4, floors=16, a = 0, passager_flow='du', controller='baseline', alpha = alpha, beta = beta, theta = theta, output_file = True)
-    modelo.run_model()
+    #modelo = Modelo(elevators=4, floors=16, a = 0, passager_flow='du', controller='baseline', alpha = alpha, beta = beta, theta = theta, output_file = True)
+    #modelo.run_model()
     
-    modelo = Modelo(elevators=4, floors=16, a = 0, passager_flow='dp', controller='baseline', alpha = alpha, beta = beta, theta = theta, output_file = True)
-    modelo.run_model()
+    #modelo = Modelo(elevators=4, floors=16, a = 0, passager_flow='dp', controller='baseline', alpha = alpha, beta = beta, theta = theta, output_file = True)
+    #modelo.run_model()
 
 
 elif controller == 'ga':

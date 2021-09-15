@@ -82,27 +82,27 @@ class PassagerAgent(Agent):
             'car_direction_call': self.dir_car_call,
             'car_queue_buttons': self.buttons_car_call,
             'car_queue_floor': self.floor_car_call,
-            'dist_d_deny1' : dist_d_deny1,
-            'n_call_deny1' : n_call_deny1,
-            'n_floor_deny1' : n_floor_deny1,
-            'car_position_deny1' : pos_car_call_deny1,
-            'car_direction_deny1' : dir_car_call_deny1,
-            'car_queue_buttons_deny1' : buttons_car_call_deny1,
-            'car_queue_floor_deny1' : floor_car_call_deny1,
-            'dist_d_deny2' : dist_d_deny2,
-            'n_call_deny2' : n_call_deny2,
-            'n_floor_deny2' : n_floor_deny2,
-            'car_position_deny2' : pos_car_call_deny2,
-            'car_direction_deny2' : dir_car_call_deny2,
-            'car_queue_buttons_deny2' : buttons_car_call_deny2,
-            'car_queue_floor_deny2' : floor_car_call_deny2,
-            'dist_d_deny3' : dist_d_deny3,
-            'n_call_deny3' : n_call_deny3,
-            'n_floor_deny3' : n_floor_deny3,
-            'car_position_deny3' : pos_car_call_deny3,
-            'car_direction_deny3' : dir_car_call_deny3,
-            'car_queue_buttons_deny3' : buttons_car_call_deny3,
-            'car_queue_floor_deny3' : floor_car_call_deny3
+            'dist_d_deny1' : self.dist_d_deny1,
+            'n_call_deny1' : self.n_call_deny1,
+            'n_floor_deny1' : self.n_floor_deny1,
+            'car_position_deny1' : self.pos_car_call_deny1,
+            'car_direction_deny1' : self.dir_car_call_deny1,
+            'car_queue_buttons_deny1' : self.buttons_car_call_deny1,
+            'car_queue_floor_deny1' : self.floor_car_call_deny1,
+            'dist_d_deny2' : self.dist_d_deny2,
+            'n_call_deny2' : self.n_call_deny2,
+            'n_floor_deny2' : self.n_floor_deny2,
+            'car_position_deny2' : self.pos_car_call_deny2,
+            'car_direction_deny2' : self.dir_car_call_deny2,
+            'car_queue_buttons_deny2' : self.buttons_car_call_deny2,
+            'car_queue_floor_deny2' : self.floor_car_call_deny2,
+            'dist_d_deny3' : self.dist_d_deny3,
+            'n_call_deny3' : self.n_call_deny3,
+            'n_floor_deny3' : self.n_floor_deny3,
+            'car_position_deny3' : self.pos_car_call_deny3,
+            'car_direction_deny3' : self.dir_car_call_deny3,
+            'car_queue_buttons_deny3' : self.buttons_car_call_deny3,
+            'car_queue_floor_deny3' : self.floor_car_call_deny3
         }
 
     def __getitem__(self,key):
@@ -122,29 +122,29 @@ class PassagerAgent(Agent):
             for el in all_elevators:
                 if el != self.car_designed:
                     if contador == 1:
-                        dist_d_deny1 = fl.dist_d(bt, el)
-                        n_call_deny1 = len(el.destination)
-                        n_floor_deny1 = fl.n_floor(bt, el)
-                        pos_car_call_deny1 =  copy((el.pos[1]))
-                        dir_car_call_deny1 = copy((el.state))
-                        buttons_car_call_deny1 = len(list(set(x['destination'] for x in el.passageiros)))
-                        floor_car_call_deny1 = len(list(x for x in el.destination if x not in list(set(x['destination'] for x in el.passageiros))))
+                        self.dist_d_deny1 = fl.dist_d(bt, el)
+                        self.n_call_deny1 = len(el.destination)
+                        self.n_floor_deny1 = fl.n_floor(bt, el)
+                        self.pos_car_call_deny1 =  copy((el.pos[1]))
+                        self.dir_car_call_deny1 = copy((el.state))
+                        self.buttons_car_call_deny1 = len(list(set(x['destination'] for x in el.passageiros)))
+                        self.floor_car_call_deny1 = len(list(x for x in el.destination if x not in list(set(x['destination'] for x in el.passageiros))))
                     elif contador == 2:
-                        dist_d_deny2 = fl.dist_d(bt, el)
-                        n_call_deny2 = len(el.destination)
-                        n_floor_deny2 = fl.n_floor(bt, el)
-                        pos_car_call_deny2 =  copy((el.pos[1]))
-                        dir_car_call_deny2 = copy((el.state))
-                        buttons_car_call_deny2 = len(list(set(x['destination'] for x in el.passageiros)))
-                        floor_car_call_deny2 = len(list(x for x in el.destination if x not in list(set(x['destination'] for x in el.passageiros))))
+                        self.dist_d_deny2 = fl.dist_d(bt, el)
+                        self.n_call_deny2 = len(el.destination)
+                        self.n_floor_deny2 = fl.n_floor(bt, el)
+                        self.pos_car_call_deny2 =  copy((el.pos[1]))
+                        self.dir_car_call_deny2 = copy((el.state))
+                        self.buttons_car_call_deny2 = len(list(set(x['destination'] for x in el.passageiros)))
+                        self.floor_car_call_deny2 = len(list(x for x in el.destination if x not in list(set(x['destination'] for x in el.passageiros))))
                     else:
-                        dist_d_deny3 = fl.dist_d(bt, el)
-                        n_call_deny3 = len(el.destination)
-                        n_floor_deny3 = fl.n_floor(bt, el)
-                        pos_car_call_deny3 =  copy((el.pos[1]))
-                        dir_car_call_deny3 = copy((el.state))
-                        buttons_car_call_deny3 = len(list(set(x['destination'] for x in el.passageiros)))
-                        floor_car_call_deny3 = len(list(x for x in el.destination if x not in list(set(x['destination'] for x in el.passageiros))))
+                        self.dist_d_deny3 = fl.dist_d(bt, el)
+                        self.n_call_deny3 = len(el.destination)
+                        self.n_floor_deny3 = fl.n_floor(bt, el)
+                        self.pos_car_call_deny3 =  copy((el.pos[1]))
+                        self.dir_car_call_deny3 = copy((el.state))
+                        self.buttons_car_call_deny3 = len(list(set(x['destination'] for x in el.passageiros)))
+                        self.floor_car_call_deny3 = len(list(x for x in el.destination if x not in list(set(x['destination'] for x in el.passageiros))))
 
                     contador = contador + 1
 

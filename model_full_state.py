@@ -26,7 +26,8 @@ def save_file_results(model):
 
         now = datetime.now()
         #df.to_csv('saida_'+model.passager_flow+"_"+now.strftime("%Y-%m-%d_%H:%M")+".csv", index=False, sep=';')
-        df.to_csv('resultado_'+model.controller+'_'+model.passager_flow+"_"+'base_full.csv',mode='a', header = False, index=False, sep=',')
+        print(df.head())
+        df.to_csv('resultado_'+model.controller+'_'+model.passager_flow+"_"+now.strftime("%Y-%m-%d_%H:%M")+'base_full.csv',mode='a', header = False, index=False, sep=',')
 
 
         #calcula medias e salva em txt

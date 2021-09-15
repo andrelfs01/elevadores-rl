@@ -1,5 +1,6 @@
 import os
-from model import Modelo
+#from model import Modelo
+from model_full_state import Modelo
 
 #configuration 
 num_elevators =str(4)

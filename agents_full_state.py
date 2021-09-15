@@ -108,15 +108,45 @@ class PassagerAgent(Agent):
     def __getitem__(self,key):
         return getattr(self,key)
 
-    def get_global_state(self, all_elevators):
+    def get_global_state(self, fl, all_elevators):
         if self.car_designed is None:
-            print("Erro carro sme carro atribuido")
+            print("Erro carro sem carro atribuido")
             quit()
         else:
+            contador = 1 
+            if (self.destination > fl.number):
+                bt = 'up'
+            else:
+                bt = 'down'
+
             for el in all_elevators:
                 if el != self.car_designed:
-                    .....
-                    terminar
+                    if contador == 1:
+                        dist_d_deny1 = fl.dist_d(bt, el)
+                        n_call_deny1 = len(el.destination)
+                        n_floor_deny1 = fl.n_floor(bt, el)
+                        pos_car_call_deny1 =  copy((el.pos[1]))
+                        dir_car_call_deny1 = copy((el.state))
+                        buttons_car_call_deny1 = len(list(set(x['destination'] for x in el.passageiros)))
+                        floor_car_call_deny1 = len(list(x for x in el.destination if x not in list(set(x['destination'] for x in el.passageiros))))
+                    elif contador == 2:
+                        dist_d_deny2 = fl.dist_d(bt, el)
+                        n_call_deny2 = len(el.destination)
+                        n_floor_deny2 = fl.n_floor(bt, el)
+                        pos_car_call_deny2 =  copy((el.pos[1]))
+                        dir_car_call_deny2 = copy((el.state))
+                        buttons_car_call_deny2 = len(list(set(x['destination'] for x in el.passageiros)))
+                        floor_car_call_deny2 = len(list(x for x in el.destination if x not in list(set(x['destination'] for x in el.passageiros))))
+                    else:
+                        dist_d_deny3 = fl.dist_d(bt, el)
+                        n_call_deny3 = len(el.destination)
+                        n_floor_deny3 = fl.n_floor(bt, el)
+                        pos_car_call_deny3 =  copy((el.pos[1]))
+                        dir_car_call_deny3 = copy((el.state))
+                        buttons_car_call_deny3 = len(list(set(x['destination'] for x in el.passageiros)))
+                        floor_car_call_deny3 = len(list(x for x in el.destination if x not in list(set(x['destination'] for x in el.passageiros))))
+
+                    contador = contador + 1
 
 class ElevatorAgent(Agent):
     unique_id = 'e_'
@@ -245,7 +275,7 @@ class ElevatorAgent(Agent):
                             p.buttons_car_call = len(list(set(x['destination'] for x in self.passageiros)))
                             p.floor_car_call = len(list(x for x in self.destination if x not in list(set(x['destination'] for x in self.passageiros))))
 
-                            p.get_global_state(self.model.elevators)
+                            p.get_global_state(f, self.model.elevators)
 
                             if f.number not in self.destination:
                                 self.destination.append(f.number)
@@ -350,7 +380,7 @@ class FloorAgent(Agent):
                     p.buttons_car_call = len(list(set(x['destination'] for x in self.passageiros)))
                     p.floor_car_call = len(list(x for x in e.destination if x not in list(set(x['destination'] for x in e.passageiros))))
 
-                    p.get_global_state(self.model.elevators)
+                    p.get_global_state(self, self.model.elevators)
 
                     if self.number not in e.destination:
                         e.destination.append(self.number)
@@ -389,7 +419,7 @@ class FloorAgent(Agent):
                 p.buttons_car_call = len(list(set(x['destination'] for x in e.passageiros)))
                 p.floor_car_call = len(list(x for x in e.destination if x not in list(set(x['destination'] for x in e.passageiros))))
 
-                p.get_global_state(self.model.elevators)
+                p.get_global_state(self, self.model.elevators)
 
                 if self.number not in e.destination:
                     e.destination.append(self.number)

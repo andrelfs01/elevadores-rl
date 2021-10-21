@@ -443,6 +443,8 @@ class FloorAgent(Agent):
     def select_car(self, passager, button):
         if self.model.controller == 'baseline':
             return (self.baseline(passager), -1, -1, -1)
+        elif self.model.controller == 'pessimistic':
+            return (self.pessimistic(passager), -1, -1, -1)
         else:
             return self.fitness_algorithm(button, self.model.alpha, self.model.beta, self.model.theta)
 

@@ -157,7 +157,7 @@ class ElevatorAgent(Agent):
         '''
             check if
         '''
-        actual_floor = self.pos[1]
+        actual_floor = self.pos[1] 
         remover = []
         for p in self.passageiros:
             if p.destination == actual_floor:
@@ -171,7 +171,7 @@ class ElevatorAgent(Agent):
             self.passageiros.remove(p)
 
     def check_boarding(self):
-        actual_floor = self.pos[1] 
+        actual_floor = self.pos[1]
         for f in self.model.floors:
             if f.number == actual_floor:
                 remover = []
@@ -224,7 +224,7 @@ class ElevatorAgent(Agent):
         if not self.destination:
             self.state = 3
         else:
-            actual_floor = self.pos[1] 
+            actual_floor = self.pos[1]
             if self.state == 3:
                 if self.destination[0] < actual_floor:
                     self.state = 4
@@ -241,7 +241,7 @@ class ElevatorAgent(Agent):
                 else:
                     self.state = 5
             else:
-                actual_floor = self.pos[1] 
+                actual_floor = self.pos[1]
                 if self.destination[0] == actual_floor and self.cont == 0:
                     self.check_leaving()
                     self.check_boarding()
@@ -346,6 +346,8 @@ class FloorAgent(Agent):
     def select_car(self, passager, button):
         if self.model.controller == 'baseline':
             return (self.baseline(passager), -1, -1, -1)
+        elif self.model.controller == 'pessimistic':
+            return self.pessimistic_algorithm(button, passager), -1,-1,-1
         else:
             return self.fitness_algorithm(button, self.model.alpha, self.model.beta, self.model.theta)
 

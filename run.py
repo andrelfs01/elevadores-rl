@@ -16,8 +16,8 @@ a = str(0)
 #choose one
 #controller = 'baseline'
 #controller = 'ga'
-#controller = 'nn'
-controller = 'gerar_tabela_q'
+controller = 'pessimistic'
+#controller = 'gerar_tabela_q'
 
 
 if controller == 'baseline':
@@ -49,4 +49,8 @@ elif controller == 'gerar_tabela_q':
     modelo.run_model()
 
     modelo = Modelo(elevators=4, floors=16, a = 0, passager_flow='du', controller='ga', alpha = 5838, beta = 6867, theta = 62, output_file = True)
+    modelo.run_model()
+
+elif controller == 'pessimistic':
+    modelo = Modelo(elevators=4, floors=16, a = 0, passager_flow='up', controller='pessimistic', alpha = 1, beta = 1, theta = 1, output_file = True)
     modelo.run_model()

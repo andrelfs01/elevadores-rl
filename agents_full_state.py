@@ -562,8 +562,8 @@ class FloorAgent(Agent):
         #return best car
         return (best_e, self.dist_d(button, e), len(e.destination), self.n_floor(button, e) )
 
-
-
-
-
-
+    def pessimistic(self, passager):
+        #TODO
+        #dado esse passageiro e a tabela (tabela gerada GA full ou /data_resources/tabela/tabela_algoritmo_pessimista)
+        #escolher o elevador
+        pass

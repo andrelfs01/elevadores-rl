@@ -547,12 +547,12 @@ class FloorAgent(Agent):
 
         #para cada elevador e
         for e in self.model.elevators:
-            print('1',alpha)
-            print('2',beta)
-            print('3',theta)
-            print('4',self.dist_d(button, e))
-            print('5',len(e.destination))
-            print('6',self.n_floor(button, e))
+            # print('1',alpha)
+            # print('2',beta)
+            # print('3',theta)
+            # print('4',self.dist_d(button, e))
+            # print('5',len(e.destination))
+            # print('6',self.n_floor(button, e))
 
             df_e = (alpha * self.dist_d(button, e)) + (beta * len(e.destination)) + (theta * self.n_floor(button, e))
             if best_df is None or df_e < best_df:
@@ -564,10 +564,15 @@ class FloorAgent(Agent):
 
     def pessimistic(self, passager):
         #TODO
+        
         #dado esse passageiro e a tabela (tabela gerada GA full ou /data_resources/tabela/tabela_algoritmo_pessimista)
         #escolher o elevador
         
-        #para cada elevador, encontra as opções mais similares (exemplo escolher o elevador A, e nao escolher B, C e D)
+        #para cada elevador, encontra as 3 opções mais similares 
+        # (escolher o elevador A, e nao escolher B, C e D)
+        # (escolher o elevador B, e nao escolher A, C e D)
+        # (escolher o elevador C, e nao escolher A, B e D)
+        # (escolher o elevador D, e nao escolher A, B e C)
         #destas, escolher a pior para cada elevador
         #destes, escolher o melhor
-        
+        pass

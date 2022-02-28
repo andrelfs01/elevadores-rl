@@ -443,6 +443,8 @@ class FloorAgent(Agent):
     def select_car(self, passager, button):
         if self.model.controller == 'baseline':
             return (self.baseline(passager), -1, -1, -1)
+        elif self.model.controller == 'pessimistic':
+            return (self.pessimistic(passager), -1, -1, -1)
         else:
             return self.fitness_algorithm(button, self.model.alpha, self.model.beta, self.model.theta)
 
@@ -560,8 +562,12 @@ class FloorAgent(Agent):
         #return best car
         return (best_e, self.dist_d(button, e), len(e.destination), self.n_floor(button, e) )
 
-
-
-
-
-
+    def pessimistic(self, passager):
+        #TODO
+        #dado esse passageiro e a tabela (tabela gerada GA full ou /data_resources/tabela/tabela_algoritmo_pessimista)
+        #escolher o elevador
+        
+        #para cada elevador, encontra as opções mais similares (exemplo escolher o elevador A, e nao escolher B, C e D)
+        #destas, escolher a pior para cada elevador
+        #destes, escolher o melhor
+        

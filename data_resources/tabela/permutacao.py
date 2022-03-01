@@ -9,13 +9,13 @@ cols = ['id', 'from', 'to', 'car', 'incoming_time', 'boarding_time', 'attended_t
             'car_queue_floor_deny2', 'dist_d_deny3', 'n_call_deny3', 'n_floor_deny3', 'car_position_deny3',
             'car_direction_deny3', 'car_queue_buttons_deny3', 'car_queue_floor_deny3', 'waiting_time', 'journey_time', 'total_time']
 
-df = pd.read_csv('/home/andre/projetos/elevadores-rl/resultados_finais/tabela/tabela_algoritmo_pessimista.csv')
+df = pd.read_csv('/home/andrelfs/projetos/elevadores-rl/data_resources/tabela/tabela_algoritmo_pessimista.csv')
 
 
 permutacoes = pd.DataFrame(columns=cols)
 
 #para cada linha da tabela gerar todas as permutacoes
-for row in df.iterrows():
+for index, row in df.iterrows():
     # 1 3 2 
     new_row = {'id': row['id'], 'from': row['from'], 'to': row['to'], 'car': row['car'], 'incoming_time': row['incoming_time'], 'boarding_time': row['boarding_time'],
                 'attended_time' : row['attended_time'], 'dist_d': row['dist_d'] , 'n_call': row['n_call'] ,
@@ -176,7 +176,6 @@ for row in df.iterrows():
 
     permutacoes = permutacoes.append(pd.Series(new_row), ignore_index=True)
 
-    
-#df = pd.concat(permutacoes)
+df = pd.concat([df, permutacoes])
 
-#df.to_csv('resultado_geral_com_permutacoes.csv')
+df.to_csv('resultado_geral_com_permutacoes.csv')

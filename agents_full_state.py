@@ -6,6 +6,7 @@ import math
 import time
 import numpy as np
 from copy import copy
+from pessimistic import pessimistic_choice 
 
 #from cto.random_walk import RandomWalker
 
@@ -547,13 +548,6 @@ class FloorAgent(Agent):
 
         #para cada elevador e
         for e in self.model.elevators:
-            print('1',alpha)
-            print('2',beta)
-            print('3',theta)
-            print('4',self.dist_d(button, e))
-            print('5',len(e.destination))
-            print('6',self.n_floor(button, e))
-
             df_e = (alpha * self.dist_d(button, e)) + (beta * len(e.destination)) + (theta * self.n_floor(button, e))
             if best_df is None or df_e < best_df:
                 best_e = e
@@ -563,11 +557,6 @@ class FloorAgent(Agent):
         return (best_e, self.dist_d(button, e), len(e.destination), self.n_floor(button, e) )
 
     def pessimistic(self, passager):
-        #TODO
-        #dado esse passageiro e a tabela (tabela gerada GA full ou /data_resources/tabela/tabela_algoritmo_pessimista)
-        #escolher o elevador
-        
-        #para cada elevador, encontra as opções mais similares (exemplo escolher o elevador A, e nao escolher B, C e D)
-        #destas, escolher a pior para cada elevador
-        #destes, escolher o melhor
-        
+        #andar de origem, o passageiro e os elevadores
+        best_e = pessimistic_choice(self, passager, self.model.elevators)
+        return best_e

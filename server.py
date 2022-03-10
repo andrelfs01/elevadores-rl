@@ -3,8 +3,8 @@ from mesa.visualization.modules import CanvasGrid, ChartModule, TextElement
 from mesa.visualization.ModularVisualization import VisualizationElement
 from mesa.visualization.UserParam import UserSettableParameter
 
-from model import Modelo as modelo
-from agents import ElevatorAgent, PassagerAgent, FloorAgent
+from model_full_state import Modelo as modelo
+from agents_full_state import ElevatorAgent, PassagerAgent, FloorAgent
 
 # Green
 RICH_COLOR = "#46FF33"
@@ -63,10 +63,10 @@ model_params = {
                 "elevators": 4,
                 "floors": 16,
                 "passager_flow" : 'dp', 
-                "controller" : 'baseline',
-                "alpha" : 7238,
-                "beta" : 6255,
-                "theta" : 7536, 
+                "controller" : 'pessimistic',
+                "alpha" : 5838,
+                "beta" : 6867,
+                "theta" : 62, 
                 "output_file" : True,
                 "a": UserSettableParameter('slider', 'a', 0.01, 0.01, 2)}
 

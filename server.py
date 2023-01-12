@@ -53,6 +53,7 @@ class Contador(TextElement):
 
 text_element = Contador()
 canvas_element = CanvasGrid(elev_portrayal, 5, 16, 200, 800)
+#canvas_element = CanvasGrid(elev_portrayal, 5, 8, 400, 800)
 
 # model_params = {                
 #                 "elevators": 4,
@@ -62,11 +63,11 @@ canvas_element = CanvasGrid(elev_portrayal, 5, 16, 200, 800)
 model_params = {                
                 "elevators": 4,
                 "floors": 16,
-                "passager_flow" : 'dp', 
-                "controller" : 'pessimistic',
-                "alpha" : 5838,
-                "beta" : 6867,
-                "theta" : 62, 
+                "passager_flow" : 'up', 
+                "controller" : 'baseline',
+                "alpha" : 1,
+                "beta" : 1,
+                "theta" : 1, 
                 "output_file" : True,
                 "a": UserSettableParameter('slider', 'a', 0.01, 0.01, 2)}
 

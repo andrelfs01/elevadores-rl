@@ -2,7 +2,7 @@ import numpy as np
 import csv
 from sklearn.neighbors import NearestNeighbors
 
-path = '/home/andre/projetos/elevadores-rl/data_resources/tabela/tabela_pessimista_com_permutacoes.csv'
+path = '.\\data_resources\\tabela\\tabela_pessimista_com_permutacoes.csv'
 with open(path, 'r') as f:
     reader = csv.reader(f, delimiter=',')
     headers = next(reader)

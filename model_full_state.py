@@ -24,15 +24,15 @@ def save_file_results(model):
         df["journey_time"] = (df["attended_time"] - df["boarding_time"])
         df["total_time"] = (df["attended_time"] - df["incoming_time"])
 
-        now = datetime.now()
+        #now = datetime.now()
         #df.to_csv('saida_'+model.passager_flow+"_"+now.strftime("%Y-%m-%d_%H:%M")+".csv", index=False, sep=';')
         print(df.head())
-        df.to_csv('resultado_'+model.controller+'_'+model.passager_flow+"_"+now.strftime("%Y-%m-%d_%H:%M")+'base_full.csv', header = True, index=False, sep=',')
+        df.to_csv('resultado_'+model.controller+'_'+model.passager_flow+'.csv', header = True, index=False, sep=',')
 
 
         #calcula medias e salva em txt
         original_stdout = sys.stdout # Save a reference to the original standard output
-        with open('resultado_'+model.controller+'_'+model.passager_flow+"_"+now.strftime("%Y-%m-%d_%H:%M")+".txt", 'w') as f:
+        with open('resultado_'+model.controller+'_'+model.passager_flow+".txt", 'w') as f:
             sys.stdout = f # Change the standard output to the file we created.
             print(df.mean(axis=0))
             print("alpha: {}".format(model.alpha))
@@ -167,12 +167,12 @@ class Modelo(Model):
         #se nao tem mais passageiros pra chegar nem pra ser atendido
         #cria um csv com os dados
         #so uma vez
-        if not self.gerado_saida and self.schedule.time > 1198:
+        if not self.gerado_saida and self.schedule.time > 2398:
             self.gerado_saida = True
             save_file_results(self)
 
 
-    def run_model(self, step_count=1200):
+    def run_model(self, step_count=2400):
 
         for i in range(step_count):
             self.step()

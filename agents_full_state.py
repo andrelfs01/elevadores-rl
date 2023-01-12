@@ -166,6 +166,9 @@ class ElevatorAgent(Agent):
         self.theta = theta
         
     def step(self):
+        #se nao tem destino, para
+        if not self.destination and self.state != 3 and self.cont == 0:
+            self.state = 3
         #se esta movendo, continua
         if (self.state == 4 or self.state == 5) and self.cont != 0:
             self.move()
@@ -175,11 +178,6 @@ class ElevatorAgent(Agent):
             actual_floor = self.pos[1] 
             # verifica se vai parar
             if (actual_floor in self.destination):
-                #tira dos destinos
-                print("antes",self.destination)
-                while (actual_floor in self.destination):
-                    self.destination.remove(actual_floor)
-                print("depois",self.destination)
                 # muda para parado descendo ou parado subindo
                 if (self.state == 4):
                     if (actual_floor == 0):
@@ -197,10 +195,17 @@ class ElevatorAgent(Agent):
                              
         #se estiver no andar e parado 
         elif ((self.state == 1 or self.state == 2 or self.state == 3) and self.cont == 0):
-            self.check_leaving()
-            self.check_boarding()
+            leave = self.check_leaving()
+            boarding = self.check_boarding()
             self.check_destination()
             #atualiza o proximo status (subir descer ou sem missao)
+            #tira dos destinos
+            print("antes",self.destination)
+            if not leave and not boarding:
+                actual_floor = self.pos[1]
+                while (actual_floor in self.destination):
+                    self.destination.remove(actual_floor)
+            print("depois",self.destination)
             
         #se estiver descendo ou subindo
         elif (self.cont != 0 and (self.state == 4 or self.state == 5)):
@@ -256,8 +261,11 @@ class ElevatorAgent(Agent):
                 self.model.schedule.remove(p)
                 p.attended = self.model.schedule.time
                 self.model.attended.append(p)
-        for p in remover:
-            self.passageiros.remove(p)
+                for p in remover:
+                    self.passageiros.remove(p)
+                return True
+        
+        return False
 
     def check_boarding(self):
         actual_floor = self.pos[1] 
@@ -269,7 +277,7 @@ class ElevatorAgent(Agent):
                     # ou se o  carro vai na mesma rota
                     print("EMBARCA?")
                     if (p.car_designed is None):
-                        if (self.state == 3):
+                        if (self.state == 3 and len(self.passageiros) < 15):
                             p.car_designed = self
                             p.pos_car_call = copy((self.pos[1]))
                             p.dir_car_call = copy((self.state))
@@ -300,38 +308,50 @@ class ElevatorAgent(Agent):
                             if p.destination not in self.destination:
                                 self.destination.append(p.destination)
                             remover.append(p)
+                            for p in remover:
+                                f.passageiros.remove(p)
+                            return True
                     else:
                         print("nao embarcou *****************")
                         if len(self.passageiros) >= 15:
-                            print("lotado *****************")
-
+                            print("lotado, chamar novamente *****************")
+                            p.car_designed = None
                 print("tinha {} passageiros e embarcaram {}".format(len(f.passageiros), len(remover)))
                 
                 for p in remover:
                     f.passageiros.remove(p)
-                print("ficaram {} passageiros ".format(len(f.passageiros)))            
+                print("ficaram {} passageiros ".format(len(f.passageiros)))     
+                return False       
     
     def check_destination(self):
         print(self.unique_id, self.destination)
+        if(not self.destination and self.state != 3):
+            print("ver")
         if not self.destination:
             self.state = 3
         else:
             actual_floor = self.pos[1] 
-            if self.state == 3:
+            if self.state == 3 and self.destination:
                 if self.destination[0] < actual_floor:
                     self.state = 4
                 else:
                     self.state = 5
+            elif  self.state in (1,2) and actual_floor in self.destination:
+                pass
             elif self.state in (2,5):
                 if max(self.destination) > actual_floor:
                     self.state = 5
-                else:
+                elif len(self.destination) > 0:
                     self.state = 4
+                else:
+                    self.state = 3
             elif self.state in (1,4):
                 if min(self.destination) < actual_floor:
                     self.state = 4
-                else:
+                elif len(self.destination) > 0:
                     self.state = 5
+                else:
+                    self.state = 3
             else:
                 actual_floor = self.pos[1] 
                 if self.destination[0] == actual_floor and self.cont == 0:
@@ -387,7 +407,7 @@ class FloorAgent(Agent):
                         e.destination.append(self.number)
 
                 else:
-                    print("error")
+                    print("nao selecionou carro")
                     #exit()
             else:
                 if self.number not in p.car_designed.destination and (p.car_designed.pos[1] != self.number):
@@ -425,7 +445,7 @@ class FloorAgent(Agent):
                 if self.number not in e.destination:
                     e.destination.append(self.number)
             else:
-                print("error")
+                print("nao selecionou nenhum carro")
                 #exit()        
             
             self.model.schedule.add(p)
@@ -435,7 +455,10 @@ class FloorAgent(Agent):
             
 
             #proximo
-            self.next_passager = self.flow.pop()
+            if len(self.flow) > 0:
+                self.next_passager = self.flow.pop()
+            else:
+                self.next_passager = [ 0, 9000000000]
         
 
     def get_flow(self, simulation):
@@ -454,18 +477,18 @@ class FloorAgent(Agent):
         if passager.destination > passager.origem:
             # se tem carro subindo e em pisso inferior, atribui
             for e in self.model.elevators:
-                if (e.state == 2 or e.state == 5) and ((e.pos[1]) <= self.number):
+                if (e.state == 2 or e.state == 5) and ((e.pos[1]) <= self.number) and len(e.passageiros) < 15:
                     return e
             
         #se passageiro descendo
         if passager.destination < passager.origem:
             # se tem carro descendo e em pisso superior, atribui
             for e in self.model.elevators:
-                if (e.state == 1 or e.state == 4) and ((e.pos[1]) >= self.number):
+                if (e.state == 1 or e.state == 4) and ((e.pos[1]) >= self.number)  and len(e.passageiros) < 15:
                     return e
         # se nao conseguiu aproveitar um carro em movimento, astribui um carro sem missao
         for e in self.model.elevators:
-            if (e.state == 3):
+            if (e.state == 3 and len(e.passageiros) < 15):
                 return e
         
         return -1

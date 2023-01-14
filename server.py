@@ -63,13 +63,14 @@ canvas_element = CanvasGrid(elev_portrayal, 5, 16, 200, 800)
 model_params = {                
                 "elevators": 4,
                 "floors": 16,
-                "passager_flow" : 'up', 
-                "controller" : 'baseline',
-                "alpha" : 1,
-                "beta" : 1,
-                "theta" : 1, 
+                "passager_flow" :  UserSettableParameter('choice', 'Passager flow', value='up', choices=['up', 'dp', 'du']),
+                #"controller" : 'baseline',
+                "controller" : UserSettableParameter('choice', 'Controller', value='baseline', choices=['baseline', 'dist', 'ga', 'pessimistic','discriminant function']),
+                "alpha" : UserSettableParameter('number', 'alpha (for GA only [1-9999])', value=0,description='(for GA only [1-9999])'),
+                "beta" : UserSettableParameter('number', 'beta (for GA only [1-9999])', value=0,description='(for GA only [1-9999])'),
+                "theta" : UserSettableParameter('number', 'theta  (for GA only [1-9999])', value=0,description='(for GA only [1-9999])'),
                 "output_file" : True,
-                "a": UserSettableParameter('slider', 'a', 0.01, 0.01, 2)}
+                "a": 0}
 
 # map data to chart in the ChartModule
 passagers_chart = ChartModule(

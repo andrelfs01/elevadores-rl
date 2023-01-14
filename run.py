@@ -17,7 +17,8 @@ a = str(0)
 controller = 'baseline'
 #controller = 'ga'
 #controller = 'pessimistic'
-#controller = 'gerar_tabela_q'
+#controller = 'fd'
+#controller = 'dist'
 
 
 if controller == 'baseline':
@@ -53,4 +54,25 @@ elif controller == 'gerar_tabela_q':
 
 elif controller == 'pessimistic':
     modelo = Modelo(elevators=4, floors=16, a = 0, passager_flow='up', controller='pessimistic', alpha = 1, beta = 1, theta = 1, output_file = True)
+    modelo.run_model()
+
+
+elif controller == 'fd':
+    modelo = Modelo(elevators=4, floors=16, a = 0, passager_flow='up', controller='FD', alpha = 1, beta = 1, theta = 1, output_file = True)
+    modelo.run_model()
+
+    modelo = Modelo(elevators=4, floors=16, a = 0, passager_flow='du', controller='FD', alpha = 1, beta = 1, theta = 1, output_file = True)
+    modelo.run_model()
+    
+    modelo = Modelo(elevators=4, floors=16, a = 0, passager_flow='dp', controller='FD', alpha = 1, beta = 1, theta = 1, output_file = True)
+    modelo.run_model()
+
+elif controller == 'fd':
+    modelo = Modelo(elevators=4, floors=16, a = 0, passager_flow='up', controller='DIST', alpha = 1, beta = 0, theta = 0, output_file = True)
+    modelo.run_model()
+
+    modelo = Modelo(elevators=4, floors=16, a = 0, passager_flow='du', controller='DIST', alpha = 1, beta = 0, theta = 0, output_file = True)
+    modelo.run_model()
+    
+    modelo = Modelo(elevators=4, floors=16, a = 0, passager_flow='dp', controller='DIST', alpha = 1, beta = 0, theta = 0, output_file = True)
     modelo.run_model()

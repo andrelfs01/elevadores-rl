@@ -469,9 +469,12 @@ class FloorAgent(Agent):
             return (self.baseline(passager), -1, -1, -1)
         elif self.model.controller == 'pessimistic':
             return (self.pessimistic(passager), -1, -1, -1)
-        else:
+        elif self.model.controller == 'ga':
             return self.fitness_algorithm(button, self.model.alpha, self.model.beta, self.model.theta)
-
+        elif self.model.controller == 'dist':
+            return self.fitness_algorithm(button, 1, 0, 0)
+        else:
+            return self.fitness_algorithm(button, 1, 1, 1)
     def baseline(self, passager):
         #se passageiro subindo
         if passager.destination > passager.origem:

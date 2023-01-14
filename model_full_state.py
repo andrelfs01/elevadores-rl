@@ -183,17 +183,17 @@ class Modelo(Model):
         # simulação:
                
         if fluxo == 'up':
-            with open('resources/traff_up.txt', 'r') as f:
+            with open('resources/TF1_traff_up.txt', 'r') as f:
                 traff_up = json.loads(f.read())
                 return traff_up
 
         elif fluxo == 'dp':
-            with open('resources/traff_dp.txt', 'r') as f:
+            with open('resources/TF2_traff_dp.txt', 'r') as f:
                 traff_dp = json.loads(f.read())
                 return traff_dp
 
         elif fluxo == 'du':
-            with open('resources/traff_du.txt', 'r') as f:
+            with open('resources/TF3_traff_du.txt', 'r') as f:
                 traff_du = json.loads(f.read())
                 return traff_du
         

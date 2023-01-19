@@ -34,7 +34,8 @@ def save_file_results(model):
         original_stdout = sys.stdout # Save a reference to the original standard output
         with open('resultado_'+model.controller+'_'+model.passager_flow+".txt", 'w') as f:
             sys.stdout = f # Change the standard output to the file we created.
-            print(df.mean(axis=0))
+            cols = ['waiting_time', 'journey_time', 'total_time']
+            print(df[cols].mean(axis=0))
             print("alpha: {}".format(model.alpha))
             print("beta: {}".format(model.beta))
             print("theta: {}".format(model.theta))
@@ -88,6 +89,22 @@ def get_total_time(model):
 def get_attended(model):
     return len(model.attended)
 
+def get_crowding(model):    
+    crowd = []
+    for p in model.attended:
+        crowd.append(p.crowding)
+    if len(crowd) < 1:
+        return 0
+    return statistics.mean(crowd)
+# def get_crowding(model):
+#     total = 0
+#     for e in model.elevators:
+#         total = total + len(e.passageiros)
+#     if (total > 0):
+#         model.crowding_history.append(total/(len(model.elevators) * 15))
+
+#     return statistics.mean(model.crowding_history)
+
 class Modelo(Model):
     """
     A model with some number of agents.
@@ -100,6 +117,7 @@ class Modelo(Model):
     elevators = []
     attended = []
     gerado_saida = False
+    crowding_history = []
 
     def __init__(self, elevators=4, floors=16, a = 0, passager_flow='up', controller='baseline', alpha = 1, beta = 1, theta = 1, output_file = False):
         super().__init__()
@@ -122,6 +140,7 @@ class Modelo(Model):
         self.controller = controller
         self.gerado_saida = not output_file
 
+        print(self.controller, self.alpha, self.beta, self.theta)
         # Create elevators
         for i in range(self.num_elevators):
             # Add the agent to a random grid cell
@@ -153,7 +172,9 @@ class Modelo(Model):
                 "JourneyTime": get_journey_time,
                 "WaitingTime": get_waiting_time,
                 "TotalTime": get_total_time,
-                "WaitingFloor": get_waiting_floor})
+                "WaitingFloor": get_waiting_floor,
+                "Crowding": get_crowding
+                })
 
     def step(self):
         #aqui vai a logica do fluxo de passageiros

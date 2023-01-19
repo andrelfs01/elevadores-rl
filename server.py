@@ -51,7 +51,19 @@ class Contador(TextElement):
     def render(self, model):
         return "Passageiros atendidos: " + str(len(model.attended))
 
+class VisualizadorElevador(TextElement):
+    def __init__(self, numero):
+        self.numero = numero
+
+    def render(self, model):
+        elevador = model.elevators[self.numero]
+        return f"Elevador {self.numero}:  {str(len(elevador.passageiros))}"
+
 text_element = Contador()
+elevator1_element = VisualizadorElevador(0)
+elevator2_element = VisualizadorElevador(1)
+elevator3_element = VisualizadorElevador(2)
+elevator4_element = VisualizadorElevador(3)
 canvas_element = CanvasGrid(elev_portrayal, 5, 16, 200, 800)
 #canvas_element = CanvasGrid(elev_portrayal, 5, 8, 400, 800)
 
@@ -97,7 +109,14 @@ time_floor_chart = ChartModule(
     ]
 )
 
+# map data to chart in the ChartModule
+mean_crowding_chart = ChartModule(
+    [
+        {"Label": "Crowding", "Color": RICH_COLOR}
+    ]
+)
 
-server = ModularServer(modelo, [canvas_element, passagers_chart, times_chart, time_floor_chart, text_element], "ElevatorRL", model_params)
+
+server = ModularServer(modelo, [canvas_element, elevator1_element,elevator2_element,elevator3_element,elevator4_element, passagers_chart, times_chart, time_floor_chart, mean_crowding_chart, text_element], "ElevatorRL", model_params)
 server.port = 8521
 server.launch()

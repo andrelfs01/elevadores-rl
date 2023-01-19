@@ -21,6 +21,7 @@ class PassagerAgent(Agent):
     incoming = -1
     boarding = -1
     attended = -1
+    crowding = -1
     
     dist_d = -1
     n_call = -1
@@ -111,7 +112,7 @@ class PassagerAgent(Agent):
 
     def get_global_state(self, fl, all_elevators):
         if self.car_designed is None:
-            print("Erro carro sem carro atribuido")
+            #print("Erro carro sem carro atribuido")
             quit()
         else:
             contador = 1 
@@ -186,7 +187,7 @@ class ElevatorAgent(Agent):
                         self.state = 1
                 #se esta subindo
                 else:
-                    if (actual_floor == len(self.model.elevators)):
+                    if (actual_floor == len(self.model.floors) - 1):
                         self.state = 3
                     else: 
                         self.state = 2
@@ -235,7 +236,7 @@ class ElevatorAgent(Agent):
                 self.state = 3
                 return 0
 
-            print("cont: {}/{}".format(self.cont, self.model.between_floors))
+            #print("cont: {}/{}".format(self.cont, self.model.between_floors))
             self.cont += 1
             if self.cont == (self.model.between_floors):
                 new_pos = x, y + 1
@@ -255,7 +256,7 @@ class ElevatorAgent(Agent):
         remover = []
         for p in self.passageiros:
             if p.destination == actual_floor:
-                print("saindo passageiro", p.unique_id)
+                #print("saindo passageiro", p.unique_id)
                 remover.append(p)
                 self.model.grid.remove_agent(p)
                 self.model.schedule.remove(p)
@@ -289,21 +290,22 @@ class ElevatorAgent(Agent):
                             if f.number not in self.destination:
                                 self.destination.append(f.number)
                         else:
-                            print("sem designado")
+                            #print("sem designado")
                             if (p.destination > f.number):
                                 bt = 'up'
                             else:
                                 bt = 'down'
                             f.select_car(p, bt)
                     #print ("{} designado | carro {} ".format(p.car_designed.unique_id, self.unique_id))
-                    #if (p.car_designed == self or (self.state == 3) or (self.state in (1,4) and p.destination < p.origem) or (self.state in (2,5) and p.destination > p.origem)) and len(self.passageiros) < 15:
-                    if (p.car_designed == self and len(self.passageiros) < 15):
+                    if (p.car_designed == self or (self.state == 3) or (self.state == 1 and p.destination < p.origem) or (self.state == 2 and p.destination > p.origem)) and len(self.passageiros) < 15:
+                    #if (p.car_designed == self and len(self.passageiros) < 15):
                         #se o carro esta ok, embarca
                         if (self.state != 0):
                             print("embarque")
                             p.utilized_car = self
                             p.model.grid.move_agent(p, self.pos)
                             p.boarding = self.model.schedule.time
+                            p.crowding = len(self.passageiros)/15
                             self.passageiros.append(p)
                             if p.destination not in self.destination:
                                 self.destination.append(p.destination)
@@ -324,11 +326,9 @@ class ElevatorAgent(Agent):
                 return False       
     
     def check_destination(self):
-        print(self.unique_id, self.destination)
-        if(not self.destination and self.state != 3):
-            print("ver")
+        #print(self.unique_id, self.destination)
         if not self.destination:
-            self.state = 3
+                self.state = 3
         else:
             actual_floor = self.pos[1] 
             if self.state == 3 and self.destination:
@@ -480,18 +480,18 @@ class FloorAgent(Agent):
         if passager.destination > passager.origem:
             # se tem carro subindo e em pisso inferior, atribui
             for e in self.model.elevators:
-                if (e.state == 2 or e.state == 5) and ((e.pos[1]) <= self.number) and len(e.passageiros) < 15:
+                if (e.state == 2 or e.state == 5) and ((e.pos[1]) <= self.number) and (len(e.passageiros) < 15  or self.number != e.pos[1]):
                     return e
             
         #se passageiro descendo
         if passager.destination < passager.origem:
             # se tem carro descendo e em pisso superior, atribui
             for e in self.model.elevators:
-                if (e.state == 1 or e.state == 4) and ((e.pos[1]) >= self.number)  and len(e.passageiros) < 15:
+                if (e.state == 1 or e.state == 4) and ((e.pos[1]) >= self.number)  and (len(e.passageiros) < 15  or self.number != e.pos[1]):
                     return e
         # se nao conseguiu aproveitar um carro em movimento, astribui um carro sem missao
         for e in self.model.elevators:
-            if (e.state == 3 and len(e.passageiros) < 15):
+            if (e.state == 3 and (len(e.passageiros) < 15  or self.number != e.pos[1])):
                 return e
         
         return -1
@@ -575,7 +575,7 @@ class FloorAgent(Agent):
         #para cada elevador e
         for e in self.model.elevators:
             df_e = (alpha * self.dist_d(button, e)) + (beta * len(e.destination)) + (theta * self.n_floor(button, e))
-            if best_df is None or df_e < best_df:
+            if (best_df is None or df_e < best_df) and (len(e.passageiros) < 15  or self.number != e.pos[1]) :
                 best_e = e
                 best_df = df_e
         

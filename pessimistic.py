@@ -2,7 +2,7 @@ import numpy as np
 import csv
 from sklearn.neighbors import NearestNeighbors
 
-path = '/home/andre/projetos/elevadores-rl/data_resources/tabela/tabela_pessimista_com_permutacoes.csv'
+path = '.\\resources\\resultado_geral_com_permutacoes_3s.csv'
 with open(path, 'r') as f:
     reader = csv.reader(f, delimiter=',')
     headers = next(reader)
@@ -70,8 +70,9 @@ def pessimistic_choice(floor, passager, elevators):
         #escolher o elevador
     options = []    
     for e in elevators:
+        if len(e.passageiros) < 15 or floor.number != e.pos[1]:
         #para cada elevador, encontra as 3 opções mais similares e retorna a pior
-        most_similars = []
-        most_similars = similarity_search(floor, passager, e, elevators)
-        options.append((e, worst_option(most_similars)))
+            most_similars = []
+            most_similars = similarity_search(floor, passager, e, elevators)
+            options.append((e, worst_option(most_similars)))
     return best_option(options)

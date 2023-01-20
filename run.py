@@ -17,7 +17,8 @@ a = str(0)
 #controller = 'baseline'
 #controller = 'ga'
 controller = 'pessimistic'
-#controller = 'gerar_tabela_q'
+#controller = 'df'
+#controller = 'dist'
 
 
 if controller == 'baseline':
@@ -28,18 +29,18 @@ if controller == 'baseline':
     modelo = Modelo(elevators=4, floors=16, a = 0, passager_flow='up', controller='baseline', alpha = alpha, beta = beta, theta = theta, output_file = True)
     modelo.run_model()
 
-    #modelo = Modelo(elevators=4, floors=16, a = 0, passager_flow='du', controller='baseline', alpha = alpha, beta = beta, theta = theta, output_file = True)
-    #modelo.run_model()
+    modelo = Modelo(elevators=4, floors=16, a = 0, passager_flow='du', controller='baseline', alpha = alpha, beta = beta, theta = theta, output_file = True)
+    modelo.run_model()
     
-    #modelo = Modelo(elevators=4, floors=16, a = 0, passager_flow='dp', controller='baseline', alpha = alpha, beta = beta, theta = theta, output_file = True)
-    #modelo.run_model()
+    modelo = Modelo(elevators=4, floors=16, a = 0, passager_flow='dp', controller='baseline', alpha = alpha, beta = beta, theta = theta, output_file = True)
+    modelo.run_model()
 
 
 elif controller == 'ga':
     #os.system("python3 ga_optimization.py "+num_elevators+" "+num_floors+" 0 "+passager_flow+" "+controller)
     os.system("python3 ga_optimization.py "+num_elevators+" "+num_floors+" 0 up "+controller)
-    os.system("python3 ga_optimization.py "+num_elevators+" "+num_floors+" 0 dp "+controller)
-    os.system("python3 ga_optimization.py "+num_elevators+" "+num_floors+" 0 du "+controller)
+    #os.system("python3 ga_optimization.py "+num_elevators+" "+num_floors+" 0 dp "+controller)
+    #os.system("python3 ga_optimization.py "+num_elevators+" "+num_floors+" 0 du "+controller)
     
 elif controller == 'gerar_tabela_q':
     modelo = Modelo(elevators=4, floors=16, a = 0, passager_flow='up', controller='ga', alpha = 1117, beta = 8513, theta = 3836, output_file = True)
@@ -53,4 +54,30 @@ elif controller == 'gerar_tabela_q':
 
 elif controller == 'pessimistic':
     modelo = Modelo(elevators=4, floors=16, a = 0, passager_flow='up', controller='pessimistic', alpha = 1, beta = 1, theta = 1, output_file = True)
+    modelo.run_model()
+
+    modelo = Modelo(elevators=4, floors=16, a = 0, passager_flow='dp', controller='pessimistic', alpha = 1, beta = 1, theta = 1, output_file = True)
+    modelo.run_model()
+
+    modelo = Modelo(elevators=4, floors=16, a = 0, passager_flow='du', controller='pessimistic', alpha = 1, beta = 1, theta = 1, output_file = True)
+    modelo.run_model()
+
+elif controller == 'df':
+    modelo = Modelo(elevators=4, floors=16, a = 0, passager_flow='up', controller='df', alpha = 1, beta = 1, theta = 1, output_file = True)
+    modelo.run_model()
+
+    modelo = Modelo(elevators=4, floors=16, a = 0, passager_flow='du', controller='df', alpha = 1, beta = 1, theta = 1, output_file = True)
+    modelo.run_model()
+    
+    modelo = Modelo(elevators=4, floors=16, a = 0, passager_flow='dp', controller='df', alpha = 1, beta = 1, theta = 1, output_file = True)
+    modelo.run_model()
+
+elif controller == 'dist':
+    modelo = Modelo(elevators=4, floors=16, a = 0, passager_flow='up', controller='dist', alpha = 1, beta = 0, theta = 0, output_file = True)
+    modelo.run_model()
+
+    modelo = Modelo(elevators=4, floors=16, a = 0, passager_flow='du', controller='dist', alpha = 1, beta = 0, theta = 0, output_file = True)
+    modelo.run_model()
+    
+    modelo = Modelo(elevators=4, floors=16, a = 0, passager_flow='dp', controller='dist', alpha = 1, beta = 0, theta = 0, output_file = True)
     modelo.run_model()

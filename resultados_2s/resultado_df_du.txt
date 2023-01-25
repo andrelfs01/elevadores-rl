@@ -1,0 +1,8 @@
+waiting_time    12.63125
+journey_time    30.96250
+total_time      43.59375
+dtype: float64
+alpha: 1
+beta: 1
+theta: 1
+crowding:0.42202970297032394

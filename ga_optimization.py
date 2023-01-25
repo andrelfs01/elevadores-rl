@@ -1,6 +1,6 @@
 
-from model import Modelo
-from agents import ElevatorAgent, PassagerAgent, FloorAgent
+from model_full_state import Modelo
+from agents_full_state import ElevatorAgent, PassagerAgent, FloorAgent
 from numpy import random as random
 from operator import itemgetter
 from pandas import DataFrame
@@ -29,7 +29,8 @@ def ga_fitness(passagers):
         df["waiting_time"] = (df["boarding_time"] - df["incoming_time"])
         df["journey_time"] = (df["attended_time"] - df["boarding_time"])
         df["total_time"] = (df["attended_time"] - df["incoming_time"])
-        fitness = df.mean(axis=0)
+        cols = ["waiting_time","journey_time","total_time"]
+        fitness = df[cols].mean(axis=0)
 
     return fitness
 
@@ -156,3 +157,5 @@ print("best_alpha = {}".format(best_alpha))
 print("bebest_beta = {}".format(best_beta))
 print("best_theta = {}".format(best_theta))
 print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")  
+modelo = Modelo(elevators=sys.argv[1], floors=sys.argv[2], a = sys.argv[3], passager_flow=sys.argv[4], controller=sys.argv[5], alpha = best_alpha, beta = best_beta, theta = best_theta, output_file = True)
+modelo.run_model()

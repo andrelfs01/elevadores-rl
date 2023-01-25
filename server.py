@@ -51,8 +51,21 @@ class Contador(TextElement):
     def render(self, model):
         return "Passageiros atendidos: " + str(len(model.attended))
 
+class VisualizadorElevador(TextElement):
+    def __init__(self, numero):
+        self.numero = numero
+
+    def render(self, model):
+        elevador = model.elevators[self.numero]
+        return f"Elevador {self.numero}:  {str(len(elevador.passageiros))}"
+
 text_element = Contador()
+elevator1_element = VisualizadorElevador(0)
+elevator2_element = VisualizadorElevador(1)
+elevator3_element = VisualizadorElevador(2)
+elevator4_element = VisualizadorElevador(3)
 canvas_element = CanvasGrid(elev_portrayal, 5, 16, 200, 800)
+#canvas_element = CanvasGrid(elev_portrayal, 5, 8, 400, 800)
 
 # model_params = {                
 #                 "elevators": 4,
@@ -62,13 +75,14 @@ canvas_element = CanvasGrid(elev_portrayal, 5, 16, 200, 800)
 model_params = {                
                 "elevators": 4,
                 "floors": 16,
-                "passager_flow" : 'dp', 
-                "controller" : 'pessimistic',
-                "alpha" : 5838,
-                "beta" : 6867,
-                "theta" : 62, 
+                "passager_flow" :  UserSettableParameter('choice', 'Passager flow', value='up', choices=['up', 'dp', 'du']),
+                #"controller" : 'baseline',
+                "controller" : UserSettableParameter('choice', 'Controller', value='baseline', choices=['baseline', 'dist', 'ga', 'pessimistic','discriminant function']),
+                "alpha" : UserSettableParameter('number', 'alpha (for GA only [1-9999])', value=0,description='(for GA only [1-9999])'),
+                "beta" : UserSettableParameter('number', 'beta (for GA only [1-9999])', value=0,description='(for GA only [1-9999])'),
+                "theta" : UserSettableParameter('number', 'theta  (for GA only [1-9999])', value=0,description='(for GA only [1-9999])'),
                 "output_file" : True,
-                "a": UserSettableParameter('slider', 'a', 0.01, 0.01, 2)}
+                "a": 0}
 
 # map data to chart in the ChartModule
 passagers_chart = ChartModule(
@@ -95,7 +109,14 @@ time_floor_chart = ChartModule(
     ]
 )
 
+# map data to chart in the ChartModule
+mean_crowding_chart = ChartModule(
+    [
+        {"Label": "Crowding", "Color": RICH_COLOR}
+    ]
+)
 
-server = ModularServer(modelo, [canvas_element, passagers_chart, times_chart, time_floor_chart, text_element], "ElevatorRL", model_params)
+
+server = ModularServer(modelo, [canvas_element, elevator1_element,elevator2_element,elevator3_element,elevator4_element, passagers_chart, times_chart, time_floor_chart, mean_crowding_chart, text_element], "ElevatorRL", model_params)
 server.port = 8521
 server.launch()

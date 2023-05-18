@@ -15,11 +15,11 @@ a = str(0)
 
 #choose one
 #controller = 'baseline'
-#controller = 'ga'
-controller = 'pessimistic'
+# controller = 'ga'
+# controller = 'pessimistic'
 #controller = 'df'
 #controller = 'dist'
-
+controller = 'gerar_tabela_q'
 
 if controller == 'baseline':
     ##se for baseline
@@ -43,13 +43,25 @@ elif controller == 'ga':
     #os.system("python3 ga_optimization.py "+num_elevators+" "+num_floors+" 0 du "+controller)
     
 elif controller == 'gerar_tabela_q':
-    modelo = Modelo(elevators=4, floors=16, a = 0, passager_flow='up', controller='ga', alpha = 1117, beta = 8513, theta = 3836, output_file = True)
+    # modelo = Modelo(elevators=4, floors=16, a = 0, passager_flow='up', controller='ga', alpha = 1117, beta = 8513, theta = 3836, output_file = True)
+    # modelo.run_model()
+
+    # modelo = Modelo(elevators=4, floors=16, a = 0, passager_flow='dp', controller='ga', alpha = 3833, beta = 6881, theta = 3564, output_file = True)
+    # modelo.run_model()
+
+    # modelo = Modelo(elevators=4, floors=16, a = 0, passager_flow='du', controller='ga', alpha = 5838, beta = 6867, theta = 62, output_file = True)
+    # modelo.run_model()
+    alpha=2331
+    beta = 4223
+    theta = 4255
+
+    modelo = Modelo(elevators=4, floors=16, a = 0, passager_flow='up', controller='ga', alpha = alpha, beta = beta, theta = theta, output_file = True)
     modelo.run_model()
 
-    modelo = Modelo(elevators=4, floors=16, a = 0, passager_flow='dp', controller='ga', alpha = 3833, beta = 6881, theta = 3564, output_file = True)
+    modelo = Modelo(elevators=4, floors=16, a = 0, passager_flow='dp', controller='ga', alpha = alpha, beta = beta, theta = theta, output_file = True)
     modelo.run_model()
 
-    modelo = Modelo(elevators=4, floors=16, a = 0, passager_flow='du', controller='ga', alpha = 5838, beta = 6867, theta = 62, output_file = True)
+    modelo = Modelo(elevators=4, floors=16, a = 0, passager_flow='du', controller='ga', alpha = alpha, beta = beta, theta = theta, output_file = True)
     modelo.run_model()
 
 elif controller == 'pessimistic':

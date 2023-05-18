@@ -127,7 +127,7 @@ class Modelo(Model):
         self.grid = MultiGrid(int(elevators)+1, (int(floors)), False)
         self.schedule = BaseScheduler(self)
         self.a = a
-        self.between_floors = 3
+        self.between_floors = 2
         self.verbose = False  # Print-monitoring
         self.floors = []
         self.elevators = []

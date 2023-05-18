@@ -4,6 +4,7 @@ from agents_full_state import ElevatorAgent, PassagerAgent, FloorAgent
 from numpy import random as random
 from operator import itemgetter
 from pandas import DataFrame
+import pandas as pd
 import sys, os
 
 # Disable
@@ -14,7 +15,7 @@ def blockPrint():
 def enablePrint():
     sys.stdout = sys.__stdout__
 
-num_gen = 100
+num_gen = 20
 population_size = 20
 num_tournament_competitors = 8
 num_elistism = 2
@@ -91,6 +92,7 @@ best = None
 best_alpha = 0
 best_beta = 0
 best_theta = 0
+
 for gen in range(num_gen):
     print ("gen {}".format(gen))
     #inicia a populacao
@@ -102,7 +104,7 @@ for gen in range(num_gen):
     #nova geracao
     else:
         new_population = []
-        #selecao (matem os 2 melhores)
+        #selecao (mantem os 2 melhores)
         p1, p2 = select_thebests(population.copy(), num_elistism)
                 
         #reproducao/crossover
@@ -124,17 +126,22 @@ for gen in range(num_gen):
         theta = int("".join(map(str, t)))
         #print (alpha, beta, theta)
         
-        if gen % 1000 == 0:
+        if False:
             modelo = Modelo(elevators=sys.argv[1], floors=sys.argv[2], a = sys.argv[3], passager_flow=sys.argv[4], controller=sys.argv[5], alpha = alpha, beta = beta, theta = theta, output_file = True)
         else:
-            modelo = Modelo(elevators=sys.argv[1], floors=sys.argv[2], a = sys.argv[3], passager_flow=sys.argv[4], controller=sys.argv[5], alpha = alpha, beta = beta, theta = theta, output_file = False)
+            #modelo = Modelo(elevators=sys.argv[1], floors=sys.argv[2], a = sys.argv[3], passager_flow=sys.argv[4], controller=sys.argv[5], alpha = alpha, beta = beta, theta = theta, output_file = False)
+            modelo_tf1 = Modelo(elevators=sys.argv[1], floors=sys.argv[2], a = sys.argv[3], passager_flow='up', controller=sys.argv[5], alpha = alpha, beta = beta, theta = theta, output_file = False)
+            modelo_tf2 = Modelo(elevators=sys.argv[1], floors=sys.argv[2], a = sys.argv[3], passager_flow='dp', controller=sys.argv[5], alpha = alpha, beta = beta, theta = theta, output_file = False)
+            modelo_tf3 = Modelo(elevators=sys.argv[1], floors=sys.argv[2], a = sys.argv[3], passager_flow='du', controller=sys.argv[5], alpha = alpha, beta = beta, theta = theta, output_file = False)
         
         blockPrint()
-        modelo.run_model()
+        modelo_tf1.run_model()
+        modelo_tf2.run_model()
+        modelo_tf3.run_model()
         enablePrint()
         #print(i)
-    
-        results  = ga_fitness(modelo.attended)
+        all_results = modelo_tf1.attended + modelo_tf2.attended + modelo_tf3.attended
+        results  = ga_fitness(all_results)
 
         if best is None or results['total_time'] < best:
             best = results['total_time']
@@ -157,5 +164,5 @@ print("best_alpha = {}".format(best_alpha))
 print("bebest_beta = {}".format(best_beta))
 print("best_theta = {}".format(best_theta))
 print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")  
-modelo = Modelo(elevators=sys.argv[1], floors=sys.argv[2], a = sys.argv[3], passager_flow=sys.argv[4], controller=sys.argv[5], alpha = best_alpha, beta = best_beta, theta = best_theta, output_file = True)
-modelo.run_model()
+# modelo = Modelo(elevators=sys.argv[1], floors=sys.argv[2], a = sys.argv[3], passager_flow=sys.argv[4], controller=sys.argv[5], alpha = best_alpha, beta = best_beta, theta = best_theta, output_file = True)
+# modelo.run_model()

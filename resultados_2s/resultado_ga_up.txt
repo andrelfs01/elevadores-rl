@@ -5,3 +5,4 @@ dtype: float64
 alpha: 804
 beta: 7335
 theta: 7734
+crowding:0.6334991708126012

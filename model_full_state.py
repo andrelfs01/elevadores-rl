@@ -3,7 +3,7 @@ from mesa.space import MultiGrid
 from mesa.time import BaseScheduler #RandomActivation
 from mesa.datacollection import DataCollector
 import os
-from agents_full_state import ElevatorAgent, PassagerAgent, FloorAgent
+from agents_full_state import ElevatorAgent, PassagerAgent, FloorAgent, ControllerAgent
 import numpy as np
 
 from random import uniform
@@ -39,6 +39,7 @@ def save_file_results(model):
             print("alpha: {}".format(model.alpha))
             print("beta: {}".format(model.beta))
             print("theta: {}".format(model.theta))
+            print("crowding:{}".format(get_crowding(model)))
             sys.stdout = original_stdout # Reset the standard output to its original value
 
 def get_floors(model):
@@ -89,21 +90,22 @@ def get_total_time(model):
 def get_attended(model):
     return len(model.attended)
 
-def get_crowding(model):    
-    crowd = []
-    for p in model.attended:
-        crowd.append(p.crowding)
-    if len(crowd) < 1:
+# def get_crowding(model):    
+#     crowd = []
+#     for p in model.attended:
+#         crowd.append(p.crowding)
+#     if len(crowd) < 1:
+#         return 0
+#     return statistics.mean(crowd)
+def get_crowding(model):
+    if len(model.crowding_history) == 0:
         return 0
-    return statistics.mean(crowd)
-# def get_crowding(model):
-#     total = 0
-#     for e in model.elevators:
-#         total = total + len(e.passageiros)
-#     if (total > 0):
-#         model.crowding_history.append(total/(len(model.elevators) * 15))
 
-#     return statistics.mean(model.crowding_history)
+    numerador = [x for x in model.crowding_history if x >= 0.5]
+    numerador = sum(numerador * 15)
+    denominador = sum(model.crowding_history * 15)
+       
+    return numerador/denominador
 
 class Modelo(Model):
     """
@@ -152,9 +154,11 @@ class Modelo(Model):
             self.elevators.append(a)
             self.grid.place_agent(a, (i+1, 0))
 
+        c = ControllerAgent("c_0", self)
+
         # Create floors
         for i in range(self.num_floors):
-            a = FloorAgent("f_"+str(i), i, (0, i), self)
+            a = FloorAgent("f_"+str(i), i, (0, i), self, c)
             self.schedule.add(a)
             self.grid.place_agent(a, (0, i))
             self.floors.append(a)

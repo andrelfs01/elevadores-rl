@@ -21,6 +21,7 @@ a = str(0)
 #controller = 'dist'
 controller = 'gerar_tabela_q'
 
+
 if controller == 'baseline':
     ##se for baseline
     alpha = 1
@@ -62,6 +63,7 @@ elif controller == 'gerar_tabela_q':
     modelo.run_model()
 
     modelo = Modelo(elevators=4, floors=16, a = 0, passager_flow='du', controller='ga', alpha = alpha, beta = beta, theta = theta, output_file = True)
+
     modelo.run_model()
 
 elif controller == 'pessimistic':

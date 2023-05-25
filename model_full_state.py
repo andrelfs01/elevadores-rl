@@ -1,6 +1,7 @@
 from mesa import Model
 from mesa.space import MultiGrid
 from mesa.time import BaseScheduler #RandomActivation
+from mesa import batch_run
 from mesa.datacollection import DataCollector
 import os
 from agents_full_state import ElevatorAgent, PassagerAgent, FloorAgent, ControllerAgent
@@ -90,13 +91,6 @@ def get_total_time(model):
 def get_attended(model):
     return len(model.attended)
 
-# def get_crowding(model):    
-#     crowd = []
-#     for p in model.attended:
-#         crowd.append(p.crowding)
-#     if len(crowd) < 1:
-#         return 0
-#     return statistics.mean(crowd)
 def get_crowding(model):
     if len(model.crowding_history) == 0:
         return 0
@@ -105,6 +99,8 @@ def get_crowding(model):
     numerador = sum(numerador * 15)
     denominador = sum(model.crowding_history * 15)
        
+    if denominador == 0:
+        return 0
     return numerador/denominador
 
 class Modelo(Model):
@@ -187,7 +183,7 @@ class Modelo(Model):
         #lista de botoes
         self.schedule.step()
         print(self.schedule.get_agent_count)
-        self.datacollector.collect(self)
+        #self.datacollector.collect(self)
 
         #se nao tem mais passageiros pra chegar nem pra ser atendido
         #cria um csv com os dados
@@ -196,12 +192,15 @@ class Modelo(Model):
             self.gerado_saida = True
             save_file_results(self)
 
+        
 
     def run_model(self, step_count=2400):
 
         for i in range(step_count):
             self.step()
             print("step: ", i)
+
+        del self.datacollector
 
     def get_simulation(self, fluxo):
         #le o arquivo de fluxos
